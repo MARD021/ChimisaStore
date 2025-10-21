@@ -1,1002 +1,203 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ChimisaFC - Crónicas y relatos del pasado</title>
+  <meta name="description" content="ChimisaFC: relatos narrativos y artículos sobre mitos, leyendas y hechos históricos del mundo antiguo. Contenido original listo para monetizar con Google AdSense." />
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://js.stripe.com/v3/"></script>
+  <!-- Open Graph / Social -->
+  <meta property="og:title" content="ChimisaFC - Crónicas y relatos del pasado" />
+  <meta property="og:description" content="Relatos narrativos sobre civilizaciones, mitos y misterios del pasado." />
+  <meta property="og:type" content="website" />
 
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AnimeFC - Tu portal de anime y películas</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js" defer></script>
-  <style id="app-style">
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-    
-    body {
-      font-family: 'Poppins', sans-serif;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    
-    .dark {
-      --bg-primary: #121212;
-      --bg-secondary: #1e1e1e;
-      --text-primary: #ffffff;
-      --text-secondary: #b3b3b3;
-      --accent-color: #8257e6;
-    }
-    
-    .light {
-      --bg-primary: #ffffff;
-      --bg-secondary: #f5f5f5;
-      --text-primary: #121212;
-      --text-secondary: #505050;
-      --accent-color: #6c47d1;
-    }
-    
-    .anime-card {
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .anime-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
-    /* Clase Carousel mejorada con snap */
-    .carousel { scroll-behavior: smooth; scrollbar-width: none; }
-    .carousel::-webkit-scrollbar { display: none; }
-    
-    .banner-overlay {
-      background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.1) 100%);
-    }
-    .loading-spinner { border-top-color: var(--accent-color); animation: spinner 0.8s linear infinite; }
-    @keyframes spinner { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
-    .toggle-checkbox:checked { right: 0; border-color: var(--accent-color); }
-    .toggle-checkbox:checked + .toggle-label { background-color: var(--accent-color); }
-    .shimmer {
-      background: linear-gradient(90deg, var(--bg-secondary) 0%, rgba(255,255,255,0.1) 50%, var(--bg-secondary) 100%);
-      background-size: 200% 100%;
-      animation: shimmer 1.5s infinite;
-    }
-    @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: var(--bg-secondary); }
-    ::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 10px; }
-    .premium-badge {
-      background: gold;
-      color: black;
-      font-weight: bold;
-      padding: 2px 6px;
-      border-radius: 6px;
-      font-size: 12px;
-      margin-left: 6px;
-    } 
- </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "ChimisaFC",
+    "url": "https://tusitio.example/"
+  }
+  </script>
+
+  <style>
+    :root{--accent:#8b5cf6;--bg:#f8fafc;--text:#0f172a}
+    *{box-sizing:border-box}
+    body{font-family:Inter, system-ui, -apple-system, Roboto, 'Segoe UI', Arial; margin:0; color:var(--text); background:var(--bg);}
+    header{background:white; box-shadow:0 2px 6px rgba(15,23,42,0.06);}
+    .container{max-width:980px;margin:0 auto;padding:18px}
+    nav{display:flex;align-items:center;gap:12px}
+    .logo{font-weight:800;color:var(--accent);font-size:20px}
+    .grid{display:grid;grid-template-columns:1fr 320px;gap:20px;margin-top:18px}
+    @media (max-width:880px){.grid{grid-template-columns:1fr}}
+    article{background:white;padding:18px;border-radius:12px;box-shadow:0 6px 20px rgba(2,6,23,0.04);margin-bottom:18px}
+    .sidebar{position:relative}
+    .card{background:white;padding:14px;border-radius:10px;margin-bottom:14px}
+    .article-title{font-size:22px;margin:0 0 8px}
+    .meta{color:#6b7280;font-size:13px;margin-bottom:12px}
+    .lead{line-height:1.7;color:#334155}
+    footer{margin-top:24px;padding:18px;text-align:center;color:#6b7280}
+    .btn{display:inline-block;background:var(--accent);color:white;padding:8px 12px;border-radius:8px;text-decoration:none}
+    .placeholder-ad{display:block;border:2px dashed #e2e8f0;border-radius:8px;padding:14px;text-align:center;color:#475569;background:linear-gradient(180deg,#fff,#fbfdff);margin:12px 0}
+    .content-image{width:100%;height:260px;object-fit:cover;border-radius:8px;margin:14px 0}
+    .list-articles{display:grid;gap:10px}
+    h2{margin-top:18px}
+  </style>
 </head>
-<body
-  x-data="app()"
-  x-init="init()"
-  :class="darkMode ? 'dark bg-[--bg-primary] text-[--text-primary]' : 'light bg-[--bg-primary] text-[--text-primary]'"
->
-  <div x-show="isLoading" class="fixed inset-0 flex items-center justify-center z-50 bg-[--bg-primary]">
-    <div class="loading-spinner w-16 h-16 border-4 border-[--bg-secondary] border-solid rounded-full"></div>
-  </div>
-
-  <div x-show="showLogin"
-     x-transition.opacity
-     x-trap.noscroll="showLogin"
-     class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-    <div @click.outside="showLogin = false"
-         class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl max-w-sm w-full relative transform transition-all">
-        
-        <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-6">Iniciar Sesión</h2>
-        <p class="text-center text-gray-600 dark:text-gray-400 mb-8">
-            Accede a todo el contenido exclusivo de AnimeFC.
-        </p>
-
-        <button @click="login('Google')" 
-                :disabled="isLoading"
-                class="w-full flex items-center justify-center p-3 border border-gray-300 dark:border-gray-600 rounded-lg text-lg font-semibold bg-white dark:bg-gray-700 text-gray-700 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600 transition duration-150">
-            <i class="fab fa-google text-red-500 mr-3"></i>
-            <span x-text="isLoading ? 'Cargando...' : 'Continuar con Google'"></span>
-        </button>
-
-        <button @click="showLogin = false"
-                class="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition">
-            <i class="fas fa-times text-xl"></i>
-        </button>
-    </div>
-</div>
-
-  <div x-show="showDetail" x-cloak 
-       class="fixed inset-0 z-50 flex flex-col"
-       @click.self="closeContentDetail()">
-    <div class="relative w-full h-full overflow-y-auto bg-[--bg-primary]"
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-300"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0">
-         
-      <div x-show="currentContent" class="relative">
-        <button @click="closeContentDetail()" 
-                class="absolute top-4 left-4 z-10 bg-black/50 text-white p-2 rounded-full hover:bg-black/80 transition">
-          <i class="fas fa-arrow-left"></i>
-        </button>
-        
-        <div class="relative h-[60vh] md:h-[70vh] w-full bg-cover bg-center"
-             :style="`background-image: url('${currentContent?.bannerImage}')`">
-          <div class="banner-overlay absolute inset-0"></div>
-          <div class="absolute bottom-0 left-0 p-6 md:p-10 w-full">
-            <h1 class="text-3xl md:text-5xl font-bold mb-2 text-white" x-text="currentContent?.title"></h1>
-            <div class="flex items-center mb-4">
-              <span class="bg-[--accent-color] text-white px-2 py-0.5 rounded text-sm mr-3">
-                <i class="fas fa-star mr-1"></i>
-                <span x-text="currentContent?.rating"></span>/10
-              </span>
-              <span class="text-white/90 text-sm mr-3" x-text="currentContent?.year"></span>
-              <span class="text-white/90 text-sm" x-text="currentContent?.duration"></span>
-              <span x-show="currentContent?.isPremium" class="premium-badge">Premium</span>
-            </div>
-            <p class="text-white/90 max-w-2xl mb-6" x-text="currentContent?.description"></p>
-            <button
-              @click="playCurrent()"
-              class="bg-[--accent-color] hover:opacity-90 transition text-white py-3 px-8 rounded-lg font-medium flex items-center">
-              <i class="fas fa-play mr-2"></i> Reproducir
-            </button>
-          </div>
-        </div>
-        
-        <div x-show="currentContent?.seasons?.length" class="p-6 md:p-10">
-          <h2 class="text-2xl font-bold mb-6">Episodios</h2>
-          
-          <div class="mb-6">
-            <select
-              x-model.number="currentSeasonIndex"
-              class="bg-[--bg-secondary] text-[--text-primary] py-2 px-4 rounded-lg border border-[--accent-color]/30 focus:border-[--accent-color] outline-none">
-              <template x-for="(s, si) in currentContent.seasons" :key="si">
-                <option :value="si" x-text="s.name"></option>
-              </template>
-            </select>
-          </div>
-          
-          <div class="grid gap-4">
-            <template x-for="(ep, i) in currentContent.seasons[currentSeasonIndex]?.episodes" :key="i">
-              <div class="flex items-center bg-[--bg-secondary] rounded-lg overflow-hidden hover:scale-[1.01] transition">
-                <div class="w-36 h-20 bg-cover bg-center" 
-                     :style="`background-image: url('${ep.image || currentContent?.thumbnail}')`"></div>
-                <div class="p-4 flex-1">
-                  <h3 class="font-medium" x-text="`Episodio ${ep.number}: ${ep.title}`"></h3>
-                  <p class="text-sm text-[--text-secondary]" x-text="ep.length"></p>
-                </div>
-                <div class="pr-4">
-                  <button class="text-[--accent-color] hover:text-[--text-primary] p-2" @click="openPlayer(ep)">
-                    <i class="fas fa-play"></i>
-                  </button>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
-        
-        <div class="p-6 md:p-10">
-          <h2 class="text-2xl font-bold mb-6">Información</h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 class="text-[--text-secondary] mb-2">Géneros</h3>
-              <p x-text="currentContent?.genres?.join(', ')"></p>
-            </div>
-            <div>
-              <h3 class="text-[--text-secondary] mb-2">Estudio</h3>
-              <p x-text="currentContent?.studio"></p>
-            </div>
-            <div>
-              <h3 class="text-[--text-secondary] mb-2">Director</h3>
-              <p x-text="currentContent?.director"></p>
-            </div>
-            <div>
-              <h3 class="text-[--text-secondary] mb-2">Idiomas</h3>
-              <p>Japonés, Español Latino, Español (España), Inglés</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="p-6 md:p-10">
-          <h2 class="text-2xl font-bold mb-6">Recomendaciones</h2>
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-            <template x-for="i in 5" :key="i">
-              <div class="anime-card rounded-lg overflow-hidden cursor-pointer">
-                <div class="aspect-[2/3] bg-cover bg-center" 
-                     style="background-image: url('https://cdn.pixabay.com/photo/2023/05/19/17/01/anime-8005750_960_720.jpg')"></div>
-                <div class="p-2">
-                  <p class="font-medium truncate">Anime recomendado</p>
-                </div>
-              </div>
-            </template>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div x-show="showPlayer" x-cloak class="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4" @click.self="closePlayer()">
-    <div class="w-full max-w-5xl bg-[--bg-secondary] rounded-xl overflow-hidden shadow-2xl relative">
-      <button @click="closePlayer()" class="absolute top-3 right-3 bg-black/50 text-white p-2 rounded-full hover:bg-black/80">
-        <i class="fas fa-times"></i>
-      </button>
-      <div class="w-full aspect-video">
-        <iframe :src="playerSrc" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
-      </div>
-    </div>
-  </div>
-
-<div x-show="showPremiumModal" x-cloak
-        class="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
-    <div class="bg-[--bg-secondary] p-6 rounded-lg text-center max-w-sm">
-      <h2 class="text-xl font-bold mb-4">Contenido Exclusivo 👑</h2>
-      <p class="mb-4">Este episodio es solo para miembros <span class="text-yellow-400 font-bold">Premium</span>.</p>
-      
-      <button @click="currentView = 'premium'; showPremiumModal = false" 
-              class="bg-yellow-400 text-black px-4 py-2 rounded font-semibold hover:opacity-90 transition">
-        Ver Planes Premium
-      </button>
-      
-      <button @click="showPremiumModal = false" class="text-[--text-secondary] mt-4 block mx-auto hover:underline">
-        Cerrar
-      </button>
-    </div>
-</div>
-
-  <div x-show="showAdPreRoll" x-cloak
-       class="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
-    <div class="bg-gray-800 p-6 rounded-lg text-center max-w-md">
-      <h2 class="text-lg font-bold mb-4">Anuncio</h2>
-      <p class="mb-4 text-white/80">Tu video empezará después del anuncio</p>
-      
-      <div class="w-full h-32 bg-yellow-500 rounded-lg flex items-center justify-center mb-4">
-        <p class="text-black font-bold text-xl">PUBLICIDAD</p>
-      </div>
-      <div class="text-sm text-gray-400">
-        <span x-data="{ seconds: 3 }" x-init="setInterval(() => { if (seconds > 0) seconds-- }, 1000)" x-text="`El contenido comenzará en ${seconds} segundos...`"></span>
-      </div>
-
-    </div>
-  </div>
-
-  <header class="fixed top-0 left-0 right-0 z-40 bg-[--bg-primary] shadow-md">
-    <div class="container mx-auto px-4 py-3">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center">
-          <a href="javascript:void(0)" @click="currentView = 'home'" class="text-2xl font-bold text-[--accent-color]">
-            Anime<span class="text-red-500">FC</span>
-          </a>
-        </div>
-        
-        <nav class="hidden md:flex items-center space-x-6">
-          <a href="javascript:void(0)" @click="currentView = 'home'" class="font-medium hover:text-[--accent-color] transition"
-             :class="currentView === 'home' ? 'text-[--accent-color]' : ''">
-            Inicio
-          </a>
-          <a href="javascript:void(0)" @click="currentView = 'movies'" class="font-medium hover:text-[--accent-color] transition"
-             :class="currentView === 'movies' ? 'text-[--accent-color]' : ''">
-            Películas
-          </a>
-          <a href="javascript:void(0)" @click="currentView = 'series'" class="font-medium hover:text-[--accent-color] transition"
-             :class="currentView === 'series' ? 'text-[--accent-color]' : ''">
-            Series
-          </a>
-          <a href="javascript:void(0)" @click="currentView = 'premium'" 
-              class="text-yellow-400 font-semibold hover:opacity-80 transition">
-            Premium <i class="fas fa-crown"></i>
-          </a>
-
-          <div class="relative">
-            <input 
-              type="text" 
-              placeholder="Buscar animes..." 
-              class="py-2 px-4 pr-10 bg-[--bg-secondary] rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[--accent-color]"
-              x-model="searchQuery"
-            >
-            <i class="fas fa-search absolute right-3 top-2.5 text-[--text-secondary]"></i>
-          </div>
-        </nav>
-        
-        <div class="flex items-center space-x-4">
-          <button @click="toggleDarkMode()" class="p-2 rounded-full hover:bg-[--bg-secondary]">
-            <i :class="darkMode ? 'fas fa-sun' : 'fas fa-moon'"></i>
-          </button>
-          
-          <template x-if="!isLoggedIn">
-            <button @click="showLogin = true" class="hidden sm:flex items-center px-4 py-2 bg-[--accent-color] hover:opacity-90 transition text-white rounded-lg">
-              <i class="fas fa-sign-in-alt mr-2"></i> Iniciar Sesión
-            </button>
-          </template>
-          
-          <template x-if="isLoggedIn">
-            <div class="relative" x-data="{ showUserMenu: false }">
-              <button @click="showUserMenu = !showUserMenu" class="flex items-center focus:outline-none">
-                <img :src="currentUser?.avatar" alt="Avatar" class="w-9 h-9 rounded-full object-cover">
-                <span class="hidden sm:block ml-2" x-text="currentUser?.name"></span>
-                <i class="fas fa-chevron-down ml-2 text-xs"></i>
-              </button>
-              
-              <div x-show="showUserMenu" @click.away="showUserMenu = false" 
-                   class="absolute right-0 mt-2 w-48 bg-[--bg-secondary] rounded-lg shadow-lg py-2 z-50"
-                   x-transition:enter="transition ease-out duration-200"
-                   x-transition:enter-start="opacity-0 transform scale-95"
-                   x-transition:enter-end="opacity-100 transform scale-100"
-                   x-transition:leave="transition ease-in duration-150"
-                   x-transition:leave-start="opacity-100 transform scale-100"
-                   x-transition:leave-end="opacity-0 transform scale-95">
-                <div class="px-4 py-2 border-b border-[--text-secondary]/10">
-                  <p class="font-medium" x-text="currentUser?.name"></p>
-                  <p class="text-sm text-[--text-secondary]" x-text="currentUser?.email"></p>
-                </div>
-                <a href="javascript:void(0)" @click="currentView = 'profile'; showUserMenu = false" class="block px-4 py-2 hover:bg-[--accent-color]/10">
-                  <i class="fas fa-user mr-2"></i> Mi Perfil
-                </a>
-                <a href="javascript:void(0)" @click="currentView = 'watchlist'; showUserMenu = false" class="block px-4 py-2 hover:bg-[--accent-color]/10">
-                  <i class="fas fa-bookmark mr-2"></i> Mi Lista
-                </a>
-                <a href="javascript:void(0)" @click="logout()" class="block px-4 py-2 text-red-500 hover:bg-red-500/10">
-                  <i class="fas fa-sign-out-alt mr-2"></i> Cerrar Sesión
-                </a>
-              </div>
-            </div>
-          </template>
-          
-          <button @click="showMobileSearch = !showMobileSearch" class="md:hidden p-2">
-            <i class="fas fa-search"></i>
-          </button>
-          <button class="md:hidden p-2">
-            <i class="fas fa-bars"></i>
-          </button>
-        </div>
-      </div>
-      
-      <div x-show="showMobileSearch" x-transition class="pt-3 pb-2 md:hidden">
-        <div class="relative">
-          <input 
-            type="text" 
-            placeholder="Buscar animes..." 
-            class="w-full py-2 px-4 pr-10 bg-[--bg-secondary] rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[--accent-color]"
-            x-model="searchQuery"
-          >
-          <i class="fas fa-search absolute right-3 top-2.5 text-[--text-secondary]"></i>
-        </div>
-      </div>
+<body>
+  <header>
+    <div class="container">
+      <nav>
+        <div class="logo">ChimisaFC</div>
+        <div style="flex:1"></div>
+        <a href="#" class="btn">Suscribirse</a>
+      </nav>
     </div>
   </header>
 
-  <main class="pt-16 pb-16">
-    <div x-show="currentView === 'home'">
-      <div class="relative h-[60vh] md:h-[80vh] bg-cover bg-center" 
-           style="background-image: url('https://cdn.pixabay.com/photo/2021/11/04/05/33/sakura-6767889_960_720.jpg')">
-        <div class="banner-overlay absolute inset-0"></div>
-        <div class="absolute bottom-0 left-0 p-6 md:p-10 w-full">
-          <span class="inline-block bg-red-600 text-white px-2 py-0.5 rounded text-sm mb-4">DESTACADO</span>
-          <h1 class="text-3xl md:text-5xl font-bold mb-2 text-white">Nuevo Anime Exclusivo</h1>
-          <p class="text-white/90 max-w-2xl mb-6">Sumérgete en un mundo lleno de magia y aventura. Disponible ahora en estreno exclusivo solo para miembros premium.</p>
-          <div class="flex flex-wrap gap-3">
-            <button @click="showContentDetail(sampleFeatured)"
-              class="bg-[--accent-color] hover:opacity-90 transition text-white py-3 px-8 rounded-lg font-medium flex items-center">
-              <i class="fas fa-play mr-2"></i> Reproducir
-            </button>
-            <button class="bg-white/20 backdrop-blur-sm hover:bg-white/30 transition text-white py-3 px-8 rounded-lg font-medium flex items-center">
-              <i class="fas fa-info-circle mr-2"></i> Más Info
-            </button>
+  <main class="container">
+    <div class="grid">
+      <section>
+        <!-- Article 1: Egipto -->
+        <article>
+          <h1 class="article-title">La última piedra: el constructor perdido de Menfis</h1>
+          <div class="meta">Narrativa · Antiguo Egipto · 7 min</div>
+          <img src="https://via.placeholder.com/1200x600?text=Egipto" alt="Pirámides" class="content-image" loading="lazy">
+
+          <p class="lead">Dicen que al amanecer, cuando la arena aún no ha tomado el calor del día y las sombras de las pirámides se alargan como dedos de oro, un hombre llamado Nebiú caminaba con una piedra bajo el brazo. Era joven para ser constructor, pero tenía la mirada de alguien que había oído a los dioses susurrar el orden correcto de las cosas. Esta es su historia, contada como si la arena misma la recordara.</p>
+
+          <p>En la orilla del Nilo, Nebiú aprendió el arte de medir el silencio. Los ancianos del taller le mostraron cómo un bloque perfecto no solo era talla: era paciencia que se vuelve arquitectura. Años más tarde, cuando los capataces mandaron levantar una mastaba que sirviera de puente entre el mundo visible y el que respira en papiros, Nebiú fue elegido para colocar la última piedra. Aquella piedra, decían, debía ser tallada con un símbolo que solo el elegido comprendería: una chispa para la eternidad.</p>
+
+          <div class="placeholder-ad" role="region" aria-label="Espacio de anuncio - Egipto">
+            ESPACIO DE ANUNCIO - 
+          </div>
+
+          <p>Pero la historia no se quedó en la obra. Una noche, cuando la luna era una cuchara delgada en el cielo, Nebiú caminó hasta la ribera y sintió cómo algo en el agua le pedía memoria. Supo entonces que la última piedra no debía encajar en la mastaba: su destino era otra estructura, un secreto en las catacumbas donde las palabras se convertían en ritual. Al volver, la ciudad ya hablaba de un susurro: la piedra había desaparecido. Algunos dijeron que la habían robado; otros, que los dioses se la habían reclamado.</p>
+
+          <p>Hoy, quienes trabajan la piedra en Menfis hablan de un hueco en la pared y de un constructor que sonreía como si supiera un cuento que ellos no. Y en las noches sin viento, los viajeros juran escuchar, entre el frotar de la arena, un golpe suave: como si una última piedra buscara su lugar en el mundo —y en ese sonido, la ciudad recuerda que no todo se mide en ladrillos: algunas cosas se sostienen en la memoria.</p>
+        </article>
+
+        <!-- Article 2: Grecia -->
+        <article>
+          <h1 class="article-title">La tejedora del destino: un cuento de Atenas</h1>
+          <div class="meta">Narrativa · Mitología griega · 6 min</div>
+          <img src="https://via.placeholder.com/1200x600?text=Grecia" alt="Columnas griegas" class="content-image" loading="lazy">
+
+          <p class="lead">Cuando aún las plazas de Atenas olían a olivo recién cortado y el mármol guardaba el calor de pasos antiguos, vivía una mujer llamada Cléa que tejía tapices tan finos que la gente juraba ver en sus hebras el rumor del futuro. No era sacerdotisa ni adivina; era tejedora. Pero cada hilo que cruzaba bajo su peine llevaba, sin que ella lo supiera, nombres y sombras de destinos lejanos.</p>
+
+          <p>Cléa crecía en la casa donde la rueca no se detenía y los niños aprendían la historia cortando los hilos. Un día, llegó a sus manos una madeja con un color que parecía contener la aurora. Empezó a tejer y, a medida que el tapiz creciera, la ciudad comenzó a cambiar de pequeñas maneras: un herrero dejó su yunque para buscar a su hija perdida; una campana que no sonaba volvió a doblar. Los atenienses empezaron a creer que en el tapiz vivía el propio Moirai —las hilanderas del destino— y que quien mirara las escenas vería su propio camino.</p>
+
+          <div class="placeholder-ad" role="region" aria-label="Espacio de anuncio - Grecia">
+            ESPACIO DE ANUNCIO - 
+          </div>
+
+          <p>Al terminar, Cléa vio en el borde del tapiz una figura de mujer que no recordaba haber tejido: era ella, vieja, con ojos cerrados. Asustada, comprendió que, quizá, el tiempo no era solo un hilo que uno trenza, sino una madeja que se vuelve por sí misma. Vendió el tapiz a un mercader, quien lo llevó a la Acrópolis. Con los años, cuando las olas de la historia golpearon los muros de la ciudad, contaron que el tapiz salvó a un grupo de refugiados al esconder sus nombres entre los pliegues del tejido.</p>
+
+          <p>Así, en las plazas donde hoy se venden aceitunas, aún se susurra que hay manos capaces de dar forma al mañana; aunque quienes ven el hilo no siempre entienden, siempre vuelven a sus casas con la sensación de que un gesto pequeño —un cruce de lana— puede alterar la ruta de un hombre o una ciudad entera.</p>
+        </article>
+
+        <!-- Article 3: Nórdicos -->
+        <article>
+          <h1 class="article-title">El último cuervo: leyenda entre los fiordos</h1>
+          <div class="meta">Narrativa · Mitología nórdica · 6 min</div>
+          <img src="https://via.placeholder.com/1200x600?text=Nordico" alt="Fiordos" class="content-image" loading="lazy">
+
+          <p class="lead">En las costas donde los fiordos muerden la tierra y los barcos parecen lanzas sobre la niebla, hubo un guerrero llamado Eirik que amaba escuchar los cuervos. No por superstición: porque en sus graznidos encontraba historias que nadie más escuchaba. Los ancianos del poblado decían que los cuervos guardaban nombres de los que se habían ido y mapas de lugares que aún no existían.</p>
+
+          <p>Una noche de niebla, un ave más grande que las demás se posó en el jarcio del barco de Eirik y dejó caer un objeto envuelto en cuero: una pluma negra tan larga que parecía una daga. Desde entonces, los sueños del guerrero cambiaron. Vio batallas donde las espadas cantaban en un idioma antiguo y vio ciudades hechas de hielo que no aparecían en los mapas. Comprendió que la pluma era un fragmento del destino, un recordatorio de que el coraje y la prudencia son dos palabras talladas en la misma piedra.</p>
+
+          <div class="placeholder-ad" role="region" aria-label="Espacio de anuncio - Nórdico">
+            ESPACIO DE ANUNCIO - 
+          </div>
+
+          <p>Cuando Eirik partió en su última travesía, las olas le susurraron que dejara la pluma al final del mundo, donde el mar se rompe en cristal. Algunos dicen que la dejó en un peñasco; otros que la enterró junto a una hoguera que aún no se ha apagado. Los más viejos afirman que, en noches de luna nueva, se ve un cuervo posado sobre ese peñasco, y su sombra dibuja mapas que solo los valientes se atreven a seguir.</p>
+
+          <p>Así terminan muchas historias aquí: con un hombre que aprende que el valor no es ausencia de miedo, sino la compañía que uno acepta cuando la oscuridad toca la puerta. Y los cuervos, como guardianes del paso, continúan hablando en voz baja, para quien tenga paciencia de escucharlos.</p>
+        </article>
+
+        <!-- Article 4: Mesopotamia -->
+        <article>
+          <h1 class="article-title">La ciudad de tres ríos: memoria de barro</h1>
+          <div class="meta">Narrativa · Antiguo Oriente Próximo · 8 min</div>
+          <img src="https://via.placeholder.com/1200x600?text=Mesopotamia" alt="Ríos" class="content-image" loading="lazy">
+
+          <p class="lead">Entre dos ríos que parecían pelear por quién era más antiguo, nació una ciudad que contaba su historia con ladrillos de barro. Aquellos ladrillos registraban nombres de los que construyeron patios y de las mujeres que cantaron sobre las cosechas. Se decía que la ciudad tenía tres ríos en su memoria: el visible, el de la lluvia y el que corre bajo la tierra de las palabras por decir.</p>
+
+          <p>El narrador de la plaza, un hombre con la voz agrietada por el sol, contaba la historia de una niña llamada Ahu que aprendió a leer las tablillas antes de caminar. Ahu descifró un día un sello antiguo que anunciaba la llegada de una gran temporada seca. En lugar de huir, enseñó a su gente a cavar pozos y a tramar redes para guardar el agua como se guarda un secreto preciado.</p>
+
+          <div class="placeholder-ad" role="region" aria-label="Espacio de anuncio - Mesopotamia">
+            ESPACIO DE ANUNCIO - 
+          </div>
+
+          <p>Cuando la sequía golpeó duro, la ciudad no se volvió ceniza: sus callejones guardaban historias y sus reservas, formas antiguas de compartir. Ahu no buscó gloria; dejó instrucciones en tablillas y en canciones. Con el tiempo, las tablillas viajaron en el bolsillo de mercaderes hasta otras tierras, y la técnica de almacenar agua se volvió leyenda —cuando alguien pedía la receta, los ancianos hablaban de Ahu y del valor de aprender a ver lo invisible.</p>
+
+          <p>Hoy, los canales pueden cambiar su curso, y las fronteras mutan; pero la ciudad de tres ríos persiste en las manos que todavía saben cómo contar la lluvia. Y entre las sombras del bazar, si cierras los ojos y escuchas, reconocerás el murmullo de una tablilla que aún canta: no hay clima tan seco que pueda borrar la memoria de quienes cuidaron las fuentes.</p>
+        </article>
+
+        <!-- Article 5: Mesoamérica -->
+        <article>
+          <h1 class="article-title">El jaguar y el calendario: un amanecer en la ceiba</h1>
+          <div class="meta">Narrativa · Mitos mesoamericanos · 7 min</div>
+          <img src="https://via.placeholder.com/1200x600?text=Mesoamerica" alt="Ceiba y jaguar" class="content-image" loading="lazy">
+
+          <p class="lead">En la sombra de una ceiba milenaria, donde los troncos hablan y las raíces esconden la noche, vivió un joven llamado Ixchel que soñaba con entender los pasos del sol. Un viejo sabio le dijo que el tiempo se parecía a un jaguar: impredecible, bello y capaz de esconderse en la maleza. Si aprendía a observar sus pisadas, podría leer el calendario del mundo.</p>
+
+          <p>Ixchel acompañó al sabio en expediciones a la montaña y al cenote. Allí fue aprendiendo que el calendario no era solo números tallados en piedra, sino platos de maíz, fiestas y noches donde las estrellas se disponían en el cielo como cuentas en un collar. En uno de esos viajes, encontró la piel de un jaguar cosida a una tabla: era un objeto ritual que marcaba el inicio de una estación propicia para la siembra.</p>
+
+          <div class="placeholder-ad" role="region" aria-label="Espacio de anuncio - Mesoamerica">
+            ESPACIO DE ANUNCIO - 
+          </div>
+
+          <p>Las fiestas que siguieron a esa estación trajeron lluvia y risa. Ixchel aprendió a leer el tiempo en las pistas del jaguar: cuando este cruzaba tranquilo, la cosecha venía fácil; cuando se mostraba inquieto, los ancianos preparaban amuletos y cantos. Con los años, Ixchel se convirtió en guardián de los días, y su nombre quedó en las crónicas como aquel que supo interpretar las señales del mundo.</p>
+
+          <p>La lección que dejó fue sencilla: el calendario no es un objeto frío; es la conversación entre la tierra y los que la cuidan. Y si alguna vez pasas junto a una ceiba y escuchas un rugido que no está, quizás será sólo el jaguar recordándote que el tiempo también puede ser una historia que merece ser contada.</p>
+        </article>
+
+        <!-- Fin de sección de artículos principales -->
+
+        <div class="card">
+          <h3 style="margin-top:0">Más relatos</h3>
+          <div class="list-articles">
+            <a href="#">Mitos egipcios: el juicio de las almas</a>
+            <a href="#">La ruta de los mercaderes fenicios</a>
+            <a href="#">Relatos de samuráis y océanos</a>
           </div>
         </div>
-      </div>
-      
-      <section class="py-8 px-6 relative"> <h2 class="text-2xl font-bold mb-6">Tendencias</h2>
-        
-        <button @click="$refs.trendingCarousel.scrollBy({ left: -560, behavior: 'smooth' })" 
-                class="hidden lg:block absolute left-4 top-1/2 mt-4 transform -translate-y-1/2 z-30 p-3 bg-black/50 text-white rounded-full hover:bg-[--accent-color] transition">
-            <i class="fas fa-chevron-left"></i>
-        </button>
-        
-        <button @click="$refs.trendingCarousel.scrollBy({ left: 560, behavior: 'smooth' })" 
-                class="hidden lg:block absolute right-4 top-1/2 mt-4 transform -translate-y-1/2 z-30 p-3 bg-black/50 text-white rounded-full hover:bg-[--accent-color] transition">
-            <i class="fas fa-chevron-right"></i>
-        </button>
-
-        <div x-ref="trendingCarousel" class="carousel flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory">
-          <template x-for="item in filtered(trendingList)" :key="item.title">
-            <div @click="showContentDetail(item)" class="anime-card flex-shrink-0 w-[280px] rounded-lg overflow-hidden cursor-pointer snap-start">
-              <div class="relative aspect-video bg-cover bg-center" 
-                   :style="`background-image: url('${item.thumbnail}')`">
-                <div class="absolute bottom-2 left-2 bg-black/70 px-2 py-1 rounded text-white text-xs">
-                  <i class="fas fa-star text-yellow-500 mr-1"></i>
-                  <span x-text="item.rating"></span>
-                </div>
-              </div>
-              <div class="p-3">
-                <h3 class="font-medium truncate flex items-center gap-2">
-                <span x-text="item.title"></span>
-                <span x-show="item.isPremium" class="premium-badge">Premium</span>
-                </h3>
-
-                <p class="text-sm text-[--text-secondary]" x-text="item.type === 'movie' ? 'Película' : `${item.seasons.length} temporadas`"></p>
-              </div>
-            </div>
-          </template>
-        </div>
       </section>
-      
-      <section class="py-4 px-6">
-        <div class="flex flex-wrap gap-2 mb-6">
-          <button class="bg-[--accent-color] text-white px-4 py-1 rounded-full text-sm">Todos</button>
-          <button class="bg-[--bg-secondary] hover:bg-[--accent-color] hover:text-white transition px-4 py-1 rounded-full text-sm">Acción</button>
-          <button class="bg-[--bg-secondary] hover:bg-[--accent-color] hover:text-white transition px-4 py-1 rounded-full text-sm">Romance</button>
-          <button class="bg-[--bg-secondary] hover:bg-[--accent-color] hover:text-white transition px-4 py-1 rounded-full text-sm">Fantasía</button>
-          <button class="bg-[--bg-secondary] hover:bg-[--accent-color] hover:text-white transition px-4 py-1 rounded-full text-sm">Comedia</button>
-          <button class="bg-[--bg-secondary] hover:bg-[--accent-color] hover:text-white transition px-4 py-1 rounded-full text-sm">Terror</button>
-          <button class="bg-[--bg-secondary] hover:bg-[--accent-color] hover:text-white transition px-4 py-1 rounded-full text-sm">Ciencia Ficción</button>
-        </div>
-      </section>
-      
-      <section class="py-4 px-6">
-        <h2 class="text-2xl font-bold mb-6">Series Populares</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          <template x-for="item in filtered(popularSeries)" :key="item.title">
-            <div @click="showContentDetail(item)" class="anime-card rounded-lg overflow-hidden cursor-pointer">
-              <div class="relative aspect-[2/3] bg-cover bg-center" 
-                   :style="`background-image: url('${item.bannerImage}')`">
-                <div class="absolute bottom-2 left-2 bg-black/70 px-2 py-1 rounded text-white text-xs">
-                  <i class="fas fa-star text-yellow-500 mr-1"></i>
-                  <span x-text="item.rating"></span>
-                </div>
-              </div>
-              <div class="p-2">
-                <h3 class="font-medium truncate" x-text="item.title"></h3>
-                <p class="text-sm text-[--text-secondary]" x-text="item.year"></p>
-              </div>
-            </div>
-          </template>
-        </div>
-      </section>
-      
-      <section class="py-8 px-6">
-        <h2 class="text-2xl font-bold mb-6">Películas Destacadas</h2>
-        <div class="carousel flex gap-4 overflow-x-auto pb-4">
-          <template x-for="item in filtered(featuredMovies)" :key="item.title">
-            <div @click="showContentDetail(item)" class="anime-card flex-shrink-0 w-[200px] rounded-lg overflow-hidden cursor-pointer">
-              <div class="relative aspect-[2/3] bg-cover bg-center" 
-                   :style="`background-image: url('${item.bannerImage}')`">
-                <div class="absolute bottom-2 left-2 bg-black/70 px-2 py-1 rounded text-white text-xs">
-                  <i class="fas fa-star text-yellow-500 mr-1"></i>
-                  <span x-text="item.rating"></span>
-                </div>
-              </div>
-              <div class="p-2">
-                <h3 class="font-medium truncate" x-text="item.title"></h3>
-                <p class="text-sm text-[--text-secondary]" x-text="item.year"></p>
-              </div>
-            </div>
-          </template>
-        </div>
-      </section>
-      
-      <section class="py-4 px-6">
-        <h2 class="text-2xl font-bold mb-6">Recién Agregados</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          <template x-for="item in filtered(recentAdded)" :key="item.title">
-            <div @click="showContentDetail(item)" class="anime-card rounded-lg overflow-hidden cursor-pointer">
-              <div class="relative aspect-[2/3] bg-cover bg-center" 
-                   :style="`background-image: url('${item.bannerImage}')`">
-                <div class="absolute bottom-2 left-2 bg-black/70 px-2 py-1 rounded text-white text-xs">
-                  <i class="fas fa-star text-yellow-500 mr-1"></i>
-                  <span x-text="item.rating"></span>
-                </div>
-              </div>
-              <div class="p-2">
-                <h3 class="font-medium truncate" x-text="item.title"></h3>
-                <p class="text-sm text-[--text-secondary]" x-text="item.type === 'movie' ? 'Película' : 'Serie'"></p>
-              </div>
-            </div>
-          </template>
-        </div>
-      </section>
-    </div>
-    
-<div x-show="currentView === 'premium'" class="p-6 md:p-12 min-h-screen text-[--text-primary]">
-    <h1 class="text-3xl md:text-5xl font-extrabold text-center mb-4 text-yellow-400">
-        Únete a AnimeFC Premium 👑
-    </h1>
-    <p class="text-center text-[--text-secondary] mb-12 max-w-2xl mx-auto">
-        Disfruta de streaming sin anuncios, contenido exclusivo y calidad 4K.
-    </p>
 
-    <div class="flex flex-col lg:flex-row justify-center items-center lg:items-stretch gap-8">
-        
-        <div class="bg-[--bg-secondary] p-8 rounded-xl shadow-2xl w-full max-w-sm border-2 border-gray-700/50">
-            <h3 class="text-2xl font-bold mb-4">Plan Gratuito</h3>
-            <p class="text-3xl font-extrabold mb-6">Gratis</p>
-            <ul class="text-left space-y-3 mb-8 text-[--text-secondary]">
-                <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i> Acceso Limitado</li>
-                <li class="flex items-center"><i class="fas fa-times-circle text-red-500 mr-3"></i> Con Anuncios</li>
-                <li class="flex items-center"><i class="fas fa-times-circle text-red-500 mr-3"></i> Máx. 720p</li>
-                <li class="flex items-center"><i class="fas fa-times-circle text-red-500 mr-3"></i> Sin contenido exclusivo</li>
-            </ul>
-            <button class="w-full bg-gray-600 text-white px-4 py-3 rounded-lg font-semibold cursor-not-allowed" disabled>
-                Plan Actual
-            </button>
+      <aside class="sidebar">
+        <div class="card">
+          <strong>Buscar</strong>
+          <form style="margin-top:8px" action="#">
+            <input name="q" placeholder="Buscar..." style="width:100%;padding:8px;border-radius:8px;border:1px solid #e6eef3">
+          </form>
         </div>
 
-        <div class="bg-[--bg-secondary] p-8 rounded-xl shadow-2xl w-full max-w-sm border-4 border-yellow-400 transform scale-105">
-            <h3 class="text-2xl font-bold mb-4 text-yellow-400">Premium Mensual</h3>
-            <p class="text-4xl font-extrabold mb-2">$9.99 <span class="text-sm font-normal text-[--text-secondary]">/ mes</span></p>
-            <p class="text-[--text-secondary] mb-6">Máxima flexibilidad.</p>
-            <ul class="text-left space-y-3 mb-8">
-                <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i> Streaming sin anuncios</li>
-                <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i> Contenido exclusivo</li>
-                <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i> Calidad hasta 4K UHD</li>
-                <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i> 4 Dispositivos simultáneos</li>
-            </ul>
-            <button 
-                @click="subscribe('Mensual')" 
-                class="w-full bg-yellow-400 text-black px-4 py-3 rounded-lg font-bold hover:bg-yellow-500 transition">
-                Suscribirse Mensual
-            </button>
+        <div class="card">
+          <strong>Acerca de ChimisaFC</strong>
+          <p style="margin:10px 0 0;font-size:14px;color:#475569">ChimisaFC reúne relatos narrativos y artículos sobre mitos, leyendas y hechos históricos. Contenido original pensado para cautivar al lector y optimizado para monetización.</p>
         </div>
 
-        <div class="bg-[--bg-secondary] p-8 rounded-xl shadow-2xl w-full max-w-sm border-2 border-gray-700/50">
-            <h3 class="text-2xl font-bold mb-4">Premium Anual</h3>
-            <p class="text-4xl font-extrabold mb-2">$99.99 <span class="text-sm font-normal text-[--text-secondary]">/ año</span></p>
-            <p class="text-[--text-secondary] mb-6">Ahorra 15%.</p>
-            <ul class="text-left space-y-3 mb-8">
-                <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i> Streaming sin anuncios</li>
-                <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i> Contenido exclusivo</li>
-                <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i> Calidad hasta 4K UHD</li>
-                <li class="flex items-center"><i class="fas fa-check-circle text-green-500 mr-3"></i> 4 Dispositivos simultáneos</li>
-            </ul>
-            <button 
-                @click="subscribe('Anual')" 
-                class="w-full bg-yellow-400 text-black px-4 py-3 rounded-lg font-bold hover:bg-yellow-500 transition">
-                Suscribirse Anual
-            </button>
-        </div>
-    </div>
-</div>
-
-    <div x-show="currentView === 'profile'" class="container mx-auto px-6 pt-8">
-      <h1 class="text-3xl font-bold mb-8">Mi Perfil</h1>
-      <div class="bg-[--bg-secondary] rounded-xl p-6 mb-8">
-        <div class="flex flex-col md:flex-row md:items-center">
-          <img :src="currentUser?.avatar" alt="Avatar" class="w-24 h-24 rounded-full object-cover mb-4 md:mb-0 md:mr-6">
-          <div>
-            <h2 class="text-2xl font-bold" x-text="currentUser?.name"></h2>
-            <p class="text-[--text-secondary]" x-text="currentUser?.email"></p>
-            <div class="mt-2">
-              <span class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-semibold">
-                <i class="fas fa-crown mr-1"></i>
-                <span x-text="currentUser?.subscription"></span>
-              </span>
-            </div>
+        <div class="card">
+          <div class="placeholder-ad" role="region" aria-label="Espacio de anuncio lateral">
+            ESPACIO DE ANUNCIO LATERAL - Banner 300x250 / responsive
           </div>
         </div>
-      </div>
-    </div>
-    
-    <div x-show="currentView === 'watchlist'" class="container mx-auto px-6 pt-8">
-      <h1 class="text-3xl font-bold mb-8">Mi Lista</h1>
-      </div>
 
-    <div x-show="currentView === 'movies'" class="container mx-auto px-6 pt-8">
-      <h1 class="text-3xl font-bold mb-6">Películas</h1>
-      <div class="flex flex-wrap gap-2 mb-6">
-        <button class="bg-[--accent-color] text-white px-4 py-1 rounded-full text-sm">Todos</button>
-        <button class="bg-[--bg-secondary] hover:bg-[--accent-color] hover:text-white transition px-4 py-1 rounded-full text-sm">Acción</button>
-        <button class="bg-[--bg-secondary] hover:bg-[--accent-color] hover:text-white transition px-4 py-1 rounded-full text-sm">Romance</button>
-        <button class="bg-[--bg-secondary] hover:bg-[--accent-color] hover:text-white transition px-4 py-1 rounded-full text-sm">Fantasía</button>
-        <button class="bg-[--bg-secondary] hover:bg-[--accent-color] hover:text-white transition px-4 py-1 rounded-full text-sm">Comedia</button>
-      </div>
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        <template x-for="item in filtered(featuredMovies)" :key="item.title">
-          <div @click="showContentDetail(item)" class="anime-card rounded-lg overflow-hidden cursor-pointer">
-            <div class="relative aspect-[2/3] bg-cover bg-center" 
-                 :style="`background-image: url('${item.bannerImage}')`">
-              <div class="absolute bottom-2 left-2 bg-black/70 px-2 py-1 rounded text-white text-xs">
-                <i class="fas fa-star text-yellow-500 mr-1"></i>
-                <span x-text="item.rating"></span>
-              </div>
-            </div>
-            <div class="p-2">
-              <h3 class="font-medium truncate" x-text="item.title"></h3>
-              <p class="text-sm text-[--text-secondary]" x-text="item.year"></p>
-            </div>
-          </div>
-        </template>
-      </div>
-    </div>
-
-    <div x-show="currentView === 'series'" class="container mx-auto px-6 pt-8">
-        <h1 class="text-3xl font-bold mb-6">Todas las Series</h1>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          <template x-for="item in filtered(trendingList)" :key="item.title">
-            <div @click="showContentDetail(item)" class="anime-card rounded-lg overflow-hidden cursor-pointer">
-              <div class="relative aspect-[2/3] bg-cover bg-center" 
-                   :style="`background-image: url('${item.bannerImage}')`">
-                <div class="absolute bottom-2 left-2 bg-black/70 px-2 py-1 rounded text-white text-xs">
-                  <i class="fas fa-star text-yellow-500 mr-1"></i>
-                  <span x-text="item.rating"></span>
-                </div>
-              </div>
-              <div class="p-2">
-                <h3 class="font-medium truncate" x-text="item.title"></h3>
-                <p class="text-sm text-[--text-secondary]" x-text="item.year"></p>
-              </div>
-            </div>
-          </template>
+        <div class="card">
+          <strong>Contacto</strong>
+          <p style="margin:10px 0 0;font-size:14px"><a href="#contacto">Enviar mensaje</a></p>
         </div>
-      </div>
+      </aside>
+    </div>
+
+    <footer>
+      <small>© <span id="year"></span> ChimisaFC · <a href="#politica">Política de privacidad</a> · <a href="#terminos">Términos</a></small>
+    </footer>
   </main>
 
   <script>
-    // -------------------------------------------------------------------------
-    // ⚠️ CONFIGURACIÓN DE FIREBASE Y STRIPE (NECESARIA PARA LA AUTENTICACIÓN/PAGOS)
-    // -------------------------------------------------------------------------
-
-    // ⚠️ REEMPLAZA ESTOS VALORES CON TUS CLAVES REALES DE FIREBASE.
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyAUp-kfeoWJyct54qvmMjBf9MtnOXD0Oz0",
-  authDomain: "animefc-21.firebaseapp.com",
-  projectId: "animefc-21",
-  storageBucket: "animefc-21.firebasestorage.app",
-  messagingSenderId: "479473502931",
-  appId: "1:479473502931:web:a9f1f28cc3ce2bdbeb2226",
-  measurementId: "G-2RYV83D2KJ"
-};
-
-    // Inicializar Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    
-    // ⚠️ CLAVE PUBLICABLE DE STRIPE (EMPIEZA CON 'pk_test_' O 'pk_live_')
-    const STRIPE_PK = 'pk_test_51SHeyhL2qPuZCTA5VlXaIrknAckHgtn2irjtwoQfE4CWZuKEme2zOyHHGLYmgM1Fz6glWm1KIPoCB4KJzgdFgveL007mM7C7i8'; 
-    const stripe = Stripe(STRIPE_PK);
-
-
-    // --------------------- 1. DATA UTILITES AND CONSTANTS ---------------------
-
-    const EMBED_URL = 'https://bingezove.com/embed/';
-    const imgGenEp = "https://cdn.pixabay.com/photo/2021/05/23/18/43/anime-6277258_960_720.jpg";
-
-    // Función que genera episodios con imagen por defecto
-    const genEpisodes = (count) =>
-      Array.from({length: count}, (_, i) => ({
-        number: i + 1,
-        title: 'Título del episodio ' + (i + 1),
-        length: '24 min',
-        embedUrl: EMBED_URL,
-        image: imgGenEp // Imagen por defecto
-      }));
-      
-    // Funciones para generar temporadas y películas
-    const genSeasons = (nSeasons = 2, eps = 12) =>
-      Array.from({length: nSeasons}, (_, s) => ({
-        name: 'Temporada ' + (s + 1),
-        episodes: genEpisodes(eps)
-      }));
-    const movieSeason = (title = 'Película', length = '120 min') => ({
-      name: 'Película',
-      episodes: [{ number: 1, title, length, embedUrl: EMBED_URL, image: imgGenEp }]
-    });
-
-    // Imágenes individuales (URL de prueba)
-    const imgOnePiece     = "https://m.media-amazon.com/images/S/pv-target-images/5c57390c319ef27a7ecb1336ce2fa8d70dc93f814e95530e9302d696ea50c6c8.jpg";
-    const imgAOT          = "https://m.media-amazon.com/images/M/MV5BN2EzYTYyNGUtOTE2ZS00ZTljLWE5M2EtZDViYjhmYzgwNThhXkEyXkFqcGc@._V1_.jpg";
-    const imgAOT1         = "https://img.asmedia.epimg.net/resizer/v2/K7ZGKKC34NFB5L6QGU3NGIJJTY.jpg?auth=89c60d6947dc848c626183f6c5c56bd6c155b77a1968e9941ece745e028b1dab&width=644&height=362&smart=true"
-    const imgDemon        = "https://demonslayer-hinokami.sega.com/img/purchase/digital-deluxe-es.jpg";
-    const imgMovie        = "https://www.lavanguardia.com/peliculas-series/images/movie/poster/1991/3/w1280/iCySGAWNMk0BETBGAK3xNOKTkX5.jpg";
-    const imgFMA          = "https://cdn.pixabay.com/photo/2021/01/30/12/20/anime-5966735_960_720.jpg";
-    const imgDeathNote    = "https://cdn.pixabay.com/photo/2017/08/30/02/14/death-note-2698983_960_720.jpg";
-    const imgHaikyuu      = "https://cdn.pixabay.com/photo/2020/05/16/14/51/anime-5172780_960_720.jpg";
-    const imgTokyoGhoul   = "https://cdn.pixabay.com/photo/2022/03/01/08/53/anime-7041235_960_720.jpg";
-    const imgSAO          = "https://cdn.pixabay.com/photo/2019/08/01/04/25/anime-4377154_960_720.jpg";
-    const imgBlackClover  = "https://cdn.pixabay.com/photo/2021/12/13/11/55/anime-6866468_960_720.jpg";
-    const imgFairyTail    = "https://cdn.pixabay.com/photo/2019/08/14/06/25/fairy-tail-4405217_960_720.jpg";
-    const imgBlueLock     = "https://cdn.pixabay.com/photo/2022/12/05/06/59/anime-7635727_960_720.jpg";
-    const imgSpyFamily    = "https://cdn.pixabay.com/photo/2022/11/29/23/18/anime-7625801_960_720.jpg";
-    const imgVinland      = "https://cdn.pixabay.com/photo/2018/03/22/17/57/anime-3250805_960_720.jpg";
-
-    // --------------------- 2. CONTENT LISTS (SIN CAMBIOS) ---------------------
-
-    const trendingList = [
-      { 
-        title:'One Piece', 
-        type:'serie', 
-        rating:'9.2', 
-        year:'1999', 
-        duration:'24 min/ep', 
-        bannerImage: imgOnePiece, 
-        thumbnail: imgOnePiece, 
-        description: 'Luffy y su tripulación, los Piratas del Sombrero de Paja, navegan en busca del tesoro definitivo, el One Piece.',
-        genres:['Acción','Aventura'], 
-        studio:'Toei Animation', 
-        director:'Konosuke Uda', 
-        isPremium: true, // Marcado como Premium
-        seasons: [ 
-          { 
-            name: "Temporada 1", 
-            episodes: [ 
-              { number: 1 , title: "Episodio 1: ¡Soy Luffy!", length: "24 min", embedUrl: EMBED_URL, image: imgAOT1 },
-              { number: 2 , title: "Episodio 2: Aparece Roronoa Zoro", length: "24 min", embedUrl: EMBED_URL, image: imgDemon },
-              ...genEpisodes(10) // El resto de episodios generados usan imgGenEp
-            ] 
-          }, 
-          { name: "Temporada 2", episodes: genEpisodes(12) } 
-        ]
-      }, 
-      { 
-        title:'Attack on Titan', 
-        type:'serie', 
-        rating:'9.3', 
-        year:'2013', 
-        duration:'24 min/ep', 
-        bannerImage: imgAOT1, 
-        thumbnail: imgAOT, 
-        description: 'En un mundo asediado por titanes, Eren Jaeger y sus amigos luchan por la supervivencia de la humanidad.',
-        genres:['Acción','Drama'], 
-        studio:'MAPPA', 
-        director:'Yuichiro Hayashi', 
-        seasons: [ 
-          { 
-            name: "Temporada 1", 
-            episodes: [ 
-              { number: 1 , title: "Episodio 1: Para ti, 2000 años después.", length: "24 min", embedUrl: EMBED_URL, image: imgTokyoGhoul }, 
-              { number: 2 , title: "Episodio 2: Aquel día.", length: "24 min", embedUrl: EMBED_URL, image: imgSAO },
-              ...genEpisodes(10)
-            ]
-          },
-          ...genSeasons(3, 24)
-        ]
-      },
-      { title:'Demon Slayer', type:'serie', rating:'9.0', year:'2019', duration:'24 min/ep', bannerImage: imgDemon, thumbnail: imgDemon, genres:['Acción','Fantasía'], studio:'Ufotable', director:'Haruo Sotozaki', seasons: genSeasons(3, 11), isPremium: true, description: 'Tanjiro se une al Cuerpo de Cazadores de Demonios para vengar a su familia y curar a su hermana.'},
-      { title:'Jujutsu Kaisen', type:'serie', rating:'8.9', year:'2020', duration:'24 min/ep', bannerImage: imgDeathNote, thumbnail: imgDeathNote, genres:['Acción','Sobrenatural'], studio:'MAPPA', director:'Sunghoo Park', seasons: genSeasons(2, 24), description: 'Un estudiante de secundaria se une a una organización secreta de hechiceros para combatir a las maldiciones.'},
-      { title:'Spy x Family', type:'serie', rating:'8.7', year:'2022', duration:'24 min/ep', bannerImage: imgSpyFamily, thumbnail: imgSpyFamily, genres:['Comedia','Acción'], studio:'WIT Studio', director:'Kazuhiro Furuhashi', seasons: genSeasons(2, 12), description: 'Un espía, una asesina y una telépata se unen para formar una "familia" y mantener la paz mundial.'},
-      { title:'Fullmetal Alchemist: Brotherhood', type:'serie', rating:'9.1', year:'2009', duration:'24 min/ep', bannerImage: imgFMA, thumbnail: imgFMA, genres:['Aventura','Fantasía'], studio:'Bones', director:'Yasuhiro Irie', seasons: genSeasons(1, 64), description: 'Dos hermanos alquimistas buscan la Piedra Filosofal para restaurar sus cuerpos después de un fallido intento de resurrección.'},
-      { title:'Haikyuu!!', type:'serie', rating:'8.8', year:'2014', duration:'24 min/ep', bannerImage: imgHaikyuu, thumbnail: imgHaikyuu, genres:['Deportes','Comedia'], studio:'Production I.G', director:'Susumu Mitsunaka', seasons: genSeasons(4, 25), description: 'Shoyo Hinata, un joven de baja estatura, busca convertirse en un gran jugador de voleibol.'},
-      { title:'Tokyo Ghoul', type:'serie', rating:'7.8', year:'2014', duration:'24 min/ep', bannerImage: imgTokyoGhoul, thumbnail: imgTokyoGhoul, genres:['Terror','Drama'], studio:'Pierrot', director:'Shuhei Morita', seasons: genSeasons(4, 12), description: 'Ken Kaneki se convierte en mitad ghoul, criaturas que se alimentan de carne humana.'},
-      { title:'Sword Art Online', type:'serie', rating:'7.6', year:'2012', duration:'24 min/ep', bannerImage: imgSAO, thumbnail: imgSAO, genres:['Aventura','Ciencia Ficción'], studio:'A-1 Pictures', director:'Tomohiko Itō', seasons: genSeasons(4, 25), description: 'Miles de jugadores quedan atrapados en un juego de realidad virtual donde morir significa morir en el mundo real.'},
-      { title:'Black Clover', type:'serie', rating:'7.9', year:'2017', duration:'24 min/ep', bannerImage: imgBlackClover, thumbnail: imgBlackClover, genres:['Acción','Fantasía'], studio:'Pierrot', director:'Tatsuya Yoshihara', seasons: genSeasons(1, 170), description: 'Asta, un joven sin magia, sueña con convertirse en el Rey Mago de su reino.'},
-      { title:'Fairy Tail', type:'serie', rating:'8.0', year:'2009', duration:'24 min/ep', bannerImage: imgFairyTail, thumbnail: imgFairyTail, genres:['Aventura','Fantasía'], studio:'A-1 Pictures', director:'Shinji Ishihira', seasons: genSeasons(9, 277), description: 'Las aventuras del gremio de magos Fairy Tail.'},
-      { title:'Blue Lock', type:'serie', rating:'8.4', year:'2022', duration:'24 min/ep', bannerImage: imgBlueLock, thumbnail: imgBlueLock, genres:['Deportes','Acción'], studio:'Eight Bit', director:'Tetsuaki Watanabe', seasons: genSeasons(1, 24), description: 'Japón busca al delantero más egoísta para ganar la Copa del Mundo de fútbol.'},
-      { title:'Vinland Saga', type:'serie', rating:'8.6', year:'2019', duration:'24 min/ep', bannerImage: imgVinland, thumbnail: imgVinland, genres:['Aventura','Drama'], studio:'WIT Studio', director:'Shuhei Yabuta', seasons: genSeasons(2, 24), description: 'La historia de Thorfinn, un joven vikingo que busca venganza.'},
-    ];
-
-    const popularSeries = trendingList.slice(2, 7);
-    const featuredMovies = [
-      { title:'Pelicula 1', type:'movie', rating:'8.5', year:'2023', duration:'120 min', bannerImage: imgMovie, thumbnail: imgMovie, genres:['Acción'], director:'Director A', seasons: [movieSeason('Pelicula 1', '120 min')] },
-      { title:'Pelicula 2 (Premium)', type:'movie', rating:'8.8', year:'2022', duration:'110 min', bannerImage: imgDemon, thumbnail: imgDemon, genres:['Fantasía'], director:'Director B', isPremium: true, seasons: [movieSeason('Pelicula 2', '110 min')] },
-      { title:'Pelicula 3', type:'movie', rating:'7.9', year:'2021', duration:'95 min', bannerImage: imgAOT1, thumbnail: imgAOT1, genres:['Comedia'], director:'Director C', seasons: [movieSeason('Pelicula 3', '95 min')] },
-      { title:'Pelicula 4', type:'movie', rating:'8.1', year:'2020', duration:'135 min', bannerImage: imgOnePiece, thumbnail: imgOnePiece, genres:['Drama'], director:'Director D', seasons: [movieSeason('Pelicula 4', '135 min')] },
-    ];
-    const recentAdded = trendingList.slice(6, 11).concat(featuredMovies.slice(0, 2));
-    const sampleFeatured = trendingList[0];
-
-
-    // --------------------- 3. ALPINE.JS APP FUNCTION (LÓGICA ACTUALIZADA) ---------------------
-    function app(){
-      return {
-        // Estado
-        darkMode: true,
-        isLoggedIn: false,
-        currentUser: { name: '', email: '', avatar: '', subscription: 'Gratis' }, // Objeto inicializado para evitar errores
-        currentView: 'home', // 'home', 'movies', 'series', 'profile', 'watchlist', 'premium'
-        showLogin: false,
-        showDetail: false,
-        currentContent: null,
-        currentSeasonIndex: 0,
-        searchQuery: '',
-        isLoading: true,
-        showPlayer: false,
-        playerSrc: '',
-        pendingPlayerSrc: '',
-        showAdPreRoll: false,
-        showPremiumModal: false,
-        
-        // Datos (Mantenidos)
-        trendingList,
-        popularSeries,
-        featuredMovies,
-        recentAdded,
-        sampleFeatured,
-        
-        // Métodos de UI (Mantenidos)
-        toggleDarkMode() {
-          this.darkMode = !this.darkMode;
-          localStorage.setItem('darkMode', this.darkMode);
-          document.body.classList.remove(this.darkMode ? 'light' : 'dark');
-          document.body.classList.add(this.darkMode ? 'dark' : 'light');
-        },
-        closePlayer() {
-          this.showPlayer = false;
-          this.playerSrc = '';
-        },
-        endAd(){
-          this.showAdPreRoll = false;
-          this.playerSrc = this.pendingPlayerSrc; // cargar el iframe
-          this.showPlayer = true; // abrir modal reproductor
-        },
-        
-        // Métodos de Contenido (Mantenidos)
-        showContentDetail(content) {
-          this.currentContent = content;
-          this.currentSeasonIndex = 0;
-          this.showDetail = true;
-        },
-        closeContentDetail() {
-          this.showDetail = false;
-          this.currentContent = null;
-        },
-        playCurrent() {
-          if (this.currentContent?.type === 'movie') {
-            this.openPlayer(this.currentContent.seasons[0].episodes[0]);
-            return;
-          }
-          if (this.currentContent?.seasons?.[0]?.episodes?.[0]) {
-            this.openPlayer(this.currentContent.seasons[0].episodes[0]);
-          }
-        },
-        openPlayer(episode) {
-          // Si el contenido o el episodio es Premium Y el usuario NO es Premium, mostrar modal
-          const isContentPremium = this.currentContent?.isPremium || episode?.isPremium;
-          // Se comprueba contra el valor real 'Premium' que viene de Firebase
-          if (isContentPremium && this.currentUser?.subscription !== 'Premium') {
-            this.showPremiumModal = true;
-            return;
-          }
-          
-          this.pendingPlayerSrc = episode.embedUrl;
-          this.showDetail = false;
-          
-          // Simular anuncio pre-roll
-          this.showAdPreRoll = true;
-          setTimeout(() => { this.endAd(); }, 3000); 
-        },
-        
-        // Métodos de Búsqueda (Mantenidos)
-        filtered(list) {
-          const q = this.searchQuery.toLowerCase();
-          if (!q) return list;
-          return list.filter(x => x.title.toLowerCase().includes(q));
-        },
-        
-        // ** MÉTODOS DE AUTENTICACIÓN REAL (SOLO GOOGLE) **
-        
-        // checkLoginStatus ya no es necesario, lo reemplaza auth.onAuthStateChanged
-        
-        async login(method) {
-            // Se fuerza el proveedor a Google, ignorando cualquier otro.
-            if (method !== 'Google') {
-                alert('Solo el inicio de sesión con Google está habilitado.');
-                return;
-            }
-
-            this.isLoading = true;
-            this.showLogin = false;
-
-            try {
-                const providerInstance = new firebase.auth.GoogleAuthProvider();
-                
-                // Iniciar el popup de autenticación de Google
-                await auth.signInWithPopup(providerInstance);
-                
-                // onAuthStateChanged se encarga de actualizar el estado.
-                alert('¡Inicio de sesión con Google exitoso! 🚀');
-
-            } catch (error) {
-                console.error("Error en el login:", error.code, error.message);
-                alert("Error al iniciar sesión: " + (error.message.includes('auth/popup-closed-by-user') ? 'Ventana de popup cerrada' : error.message));
-            } finally {
-                this.isLoading = false;
-            }
-        },
-
-        async logout() {
-            this.isLoading = true;
-            try {
-                // Función real de Firebase para cerrar sesión
-                await auth.signOut(); 
-                alert('Sesión cerrada correctamente.');
-            } catch (error) {
-                console.error("Error al cerrar sesión:", error);
-                alert("Error al cerrar sesión.");
-            } finally {
-                this.isLoading = false;
-                this.currentView = 'home';
-            }
-        },
-
-        // ** MÉTODO PREMIUM REAL (STRIPE CHECKOUT) **
-
-        async subscribe(plan) {
-            this.isLoading = true;
-            this.showPremiumModal = false;
-            const user = auth.currentUser;
-
-            if (!user) {
-                alert("Debes iniciar sesión para suscribirte.");
-                this.showLogin = true;
-                this.isLoading = false;
-                return;
-            }
-            
-            try {
-                // 1. Crear una sesión de checkout en Firestore.
-                const checkoutRef = await db.collection('customers').doc(user.uid)
-                    .collection('checkout_sessions').add({
-                        // ⚠️ REEMPLAZA ESTOS CON TUS IDs REALES DE STRIPE
-                        price: plan === 'Mensual' ? 'prod_TE7IwlJSYbMrdy' : 'prod_TE7K1wWw8um0Xj', 
-                        // Redirigir a la URL actual después del pago
-                        success_url: window.location.origin + window.location.pathname, 
-                        cancel_url: window.location.origin + window.location.pathname, 
-                    });
-
-                // 2. Esperar a que la extensión de Stripe agregue la URL
-                checkoutRef.onSnapshot(async (snap) => {
-                    const { error, url } = snap.data();
-                    if (error) {
-                        alert(`Ocurrió un error: ${error.message}`);
-                        this.isLoading = false;
-                    }
-                    if (url) {
-                        // 3. Redireccionar al usuario a Stripe Checkout
-                        window.location.assign(url);
-                    }
-                });
-
-            } catch (error) {
-                console.error('Error al iniciar el pago:', error);
-                alert('Error al iniciar el proceso de pago. Revisa la consola.');
-            } finally {
-                // El estado de carga se maneja con la redirección de Stripe.
-            }
-        },
-
-        // ** INICIALIZACIÓN REAL **
-        init() {
-            // Inicializar Dark Mode
-            this.darkMode = localStorage.getItem('darkMode') !== 'false';
-            document.body.classList.add(this.darkMode ? 'dark' : 'light');
-            
-            // Escuchar el estado de autenticación de Firebase
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    this.isLoggedIn = true;
-                    
-                    // Rellenar currentUser con datos de Firebase
-                    this.currentUser = {
-                        name: user.displayName || user.email.split('@')[0],
-                        email: user.email,
-                        avatar: user.photoURL || 'https://i.pinimg.com/736x/4f/62/d2/4f62d2bc39cb6092fe4dedb978c285c5.jpg',
-                        subscription: 'Gratis'
-                    };
-                    
-                    // Comprobar estado de suscripción Premium (Custom Claims de Firebase Auth)
-                    user.getIdTokenResult().then(tokenResult => {
-                        const role = tokenResult.claims.stripeRole;
-                        // El valor 'premium' lo establece la extensión de Stripe
-                        this.currentUser.subscription = role === 'premium' ? 'Premium' : 'Gratis';
-                    });
-
-                } else {
-                    this.isLoggedIn = false;
-                    // Resetear currentUser al desloguearse
-                    this.currentUser = { name: '', email: '', avatar: '', subscription: 'Gratis' };
-                }
-                this.isLoading = false; // Detener la pantalla de carga
-            });
-        }
-      };
-    }
-</script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
