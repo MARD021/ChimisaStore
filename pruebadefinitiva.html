@@ -259,20 +259,19 @@
         <iframe :src="playerSrc" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
       </div>
       
-      <div class="flex justify-between items-center p-3 bg-black/90 text-white flex-wrap"> 
+      <div class="flex justify-between items-center p-3 bg-black/90 text-white">
         <button @click="playPreviousEpisode()"
                 :disabled="currentEpisodeIndex === 0"
                 :class="{'opacity-50 cursor-not-allowed': currentEpisodeIndex === 0}"
-                class="bg-[--accent-color] hover:opacity-90 transition text-white py-2 px-3 rounded-lg font-medium flex items-center">
-            <i class="fas fa-backward mr-1 sm:mr-2"></i> 
-            <span class="hidden sm:inline">Anterior</span>
+                class="bg-[--accent-color] hover:opacity-90 transition text-white py-2 px-4 rounded-lg font-medium flex items-center">
+            <i class="fas fa-backward mr-2"></i> Anterior
         </button>
 
         <p class="text-sm font-medium hidden sm:block truncate flex-grow text-center px-4" 
            x-text="currentContentPlaying ? `S${currentSeasonIndex + 1}: E${currentContentPlaying.seasons[currentSeasonIndex]?.episodes[currentEpisodeIndex]?.number} - ${currentContentPlaying.seasons[currentSeasonIndex]?.episodes[currentEpisodeIndex]?.title}` : ''">
         </p>
 
-        <div class="flex items-center space-x-2">
+        <div class="flex items-center space-x-3">
             <div x-show="currentEpisodeStreams.length > 0">
               <select
                 x-model.number="currentStreamIndex"
@@ -286,9 +285,8 @@
             <button @click="playNextEpisode()"
                     :disabled="currentEpisodeIndex >= (currentContentPlaying?.seasons[currentSeasonIndex]?.episodes?.length - 1)"
                     :class="{'opacity-50 cursor-not-allowed': currentEpisodeIndex >= (currentContentPlaying?.seasons[currentSeasonIndex]?.episodes?.length - 1)}"
-                    class="bg-[--accent-color] hover:opacity-90 transition text-white py-2 px-3 rounded-lg font-medium flex items-center">
-                <span class="hidden sm:inline">Siguiente</span>
-                <i class="fas fa-forward ml-1 sm:ml-2"></i>
+                    class="bg-[--accent-color] hover:opacity-90 transition text-white py-2 px-4 rounded-lg font-medium flex items-center">
+                Siguiente <i class="fas fa-forward ml-2"></i>
             </button>
         </div>
       </div>
@@ -361,7 +359,7 @@
           </button>
           
           <template x-if="!isLoggedIn">
-            <button @click="showLogin = true" class="hidden sm:flex items-center px-4 py-2 bg-[--accent-color] hover:opacity-90 transition text-white rounded-lg">
+            <button @click="showLogin = true" class="flex items-center px-4 py-2 bg-[--accent-color] hover:opacity-90 transition text-white rounded-lg text-sm">
               <i class="fas fa-sign-in-alt mr-2"></i> Iniciar Sesión
             </button>
           </template>
@@ -399,14 +397,13 @@
             </div>
           </template>
           
-          <button @click="showMobileSearch = !showMobileSearch; showMobileMenu = false" class="md:hidden p-2">
+          <button @click="showMobileSearch = !showMobileSearch" class="md:hidden p-2">
             <i class="fas fa-search"></i>
           </button>
-          
-          <button @click="showMobileMenu = !showMobileMenu; showMobileSearch = false" class="md:hidden p-2">
-            <i :class="showMobileMenu ? 'fas fa-times' : 'fas fa-bars'"></i>
+          <button class="md:hidden p-2">
+            <i class="fas fa-bars"></i>
           </button>
-          </div>
+        </div>
       </div>
       
       <div x-show="showMobileSearch" x-transition class="pt-3 pb-2 md:hidden">
@@ -420,34 +417,8 @@
           <i class="fas fa-search absolute right-3 top-2.5 text-[--text-secondary]"></i>
         </div>
       </div>
-      
     </div>
-    
-    <div x-show="showMobileMenu" 
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 translate-y-[-10px]"
-         x-transition:enter-end="opacity-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100 translate-y-0"
-         x-transition:leave-end="opacity-0 translate-y-[-10px]"
-         @click.away="showMobileMenu = false"
-         class="md:hidden bg-[--bg-primary] shadow-lg absolute top-full left-0 right-0 z-40 p-4 border-t border-[--bg-secondary]">
-        <nav class="flex flex-col space-y-3">
-            <a href="javascript:void(0)" @click="currentView = 'home'; showMobileMenu = false" class="font-medium hover:text-[--accent-color] transition"
-                 :class="currentView === 'home' ? 'text-[--accent-color]' : ''"> Inicio </a>
-            <a href="javascript:void(0)" @click="currentView = 'movies'; showMobileMenu = false" class="font-medium hover:text-[--accent-color] transition"
-                 :class="currentView === 'movies' ? 'text-[--accent-color]' : ''"> Películas </a>
-            <a href="javascript:void(0)" @click="currentView = 'series'; showMobileMenu = false" class="font-medium hover:text-[--accent-color] transition"
-                 :class="currentView === 'series' ? 'text-[--accent-color]' : ''"> Anime </a>
-            <a href="javascript:void(0)" @click="currentView = 'dramas'; showMobileMenu = false" class="font-medium hover:text-[--accent-color] transition"
-                 :class="currentView === 'dramas' ? 'text-[--accent-color]' : ''"> Dramas </a>
-            <a href="javascript:void(0)" @click="currentView = 'telenovelas'; showMobileMenu = false" class="font-medium hover:text-[--accent-color] transition"
-                 :class="currentView === 'telenovelas' ? 'text-[--accent-color]' : ''"> Telenovelas </a>
-            <a href="javascript:void(0)" @click="currentView = 'cartoons'; showMobileMenu = false" class="font-medium hover:text-[--accent-color] transition"
-                 :class="currentView === 'cartoons' ? 'text-[--accent-color]' : ''"> Caricaturas </a>
-        </nav>
-    </div>
-    </header>
+  </header>
 
   <main class="pt-16 pb-16">
     
@@ -623,7 +594,7 @@
             <button class="bg-[--bg-secondary] hover:bg-[--accent-color] hover:text-white transition px-4 py-1 rounded-full text-sm">Thriller</button>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          <template x-for="item in filtered(asianDramas)" :key="item.title">
+          <template x-for="item in filtered(trendingList)" :key="item.title">
             <div @click="showContentDetail(item)" class="anime-card rounded-lg overflow-hidden cursor-pointer">
               <div class="relative aspect-[2/3] bg-cover bg-center" 
                    :style="`background-image: url('${item.bannerImage}')`">
@@ -651,7 +622,7 @@
             <button class="bg-[--bg-secondary] hover:bg-[--accent-color] hover:text-white transition px-4 py-1 rounded-full text-sm">Dramas Turcos</button>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          <template x-for="item in filtered(telenovelas)" :key="item.title">
+          <template x-for="item in filtered(recentAdded)" :key="item.title">
             <div @click="showContentDetail(item)" class="anime-card rounded-lg overflow-hidden cursor-pointer">
               <div class="relative aspect-[2/3] bg-cover bg-center" 
                    :style="`background-image: url('${item.bannerImage}')`">
@@ -679,7 +650,7 @@
             <button class="bg-[--bg-secondary] hover:bg-[--accent-color] hover:text-white transition px-4 py-1 rounded-full text-sm">Superhéroes</button>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          <template x-for="item in filtered(cartoons)" :key="item.title">
+          <template x-for="item in filtered(popularSeries)" :key="item.title">
             <div @click="showContentDetail(item)" class="anime-card rounded-lg overflow-hidden cursor-pointer">
               <div class="relative aspect-[2/3] bg-cover bg-center" 
                    :style="`background-image: url('${item.bannerImage}')`">
@@ -801,7 +772,6 @@
     const imghori         = "IMG/horimiya-season-one-finale.jpg"
     // --------------------- 6.2: LISTAS DE CONTENIDO (DATOS DE PRUEBA) ---------------------
 
-    // ✅ MODIFICADO: Se agregan más entradas a trendingList para poblar mejor la vista 'series'
     const trendingList = [
       { 
         title:'Horimiya', 
@@ -819,6 +789,7 @@
           { 
             name: "Temporada 1", 
             episodes:  [
+          // ✅ MODIFICADO: Episodios con la nueva estructura 'streams'
           { number: 1 , title: "Un rayo de luz", length: "24 min", 
             streams: [
               { language: "Japonés", type: "Sub Español", url: "https://bingezove.com/embed/hn1g7a7ly4hq" },
@@ -846,56 +817,19 @@
           //{ name: "Temporada 2", episodes: genEpisodes(12) }
         ]
       }, 
+      // Los episodios de Demon Slayer usarán la función genSeasons/genEpisodes con streams por defecto
       { title:'Demon Slayer', type:'serie', rating:'9.0', year:'2019', duration:'24 min/ep', bannerImage: imgDemon, thumbnail: imgDemon, genres:['Acción','Fantasía'], studio:'Ufotable', director:'Haruo Sotozaki', seasons: genSeasons(3, 11), description: 'Tanjiro se une al Cuerpo de Cazadores de Demonios para vengar a su familia y curar a su hermana.'},
-      // Nuevas series de Anime añadidas
-      { title:'Attack on Titan', type:'serie', rating:'9.1', year:'2013', duration:'24 min/ep', bannerImage: imgAOT, thumbnail: imgAOT1, genres:['Acción','Militar'], studio:'MAPPA', director:'Tetsurō Araki', seasons: genSeasons(4, 16), description: 'La humanidad lucha por sobrevivir contra los Titanes.'},
-      { title:'One Piece', type:'serie', rating:'9.4', year:'1999', duration:'24 min/ep', bannerImage: imgOnePiece, thumbnail: imgOnePiece, genres:['Aventura','Shonen'], studio:'Toei Animation', director:'Kônosuke Uda', seasons: genSeasons(20, 25), description: 'Luffy y su tripulación buscan el One Piece para convertirse en el Rey de los Piratas.'},
-      { title:'Fullmetal Alchemist', type:'serie', rating:'9.1', year:'2009', duration:'24 min/ep', bannerImage: imgFMA, thumbnail: imgFMA, genres:['Fantasía','Ciencia Ficción'], studio:'Bones', director:'Yasuhiro Irie', seasons: genSeasons(1, 64), description: 'Dos hermanos buscan la Piedra Filosofal para recuperar sus cuerpos.'},
-      { title:'Death Note', type:'serie', rating:'9.0', year:'2006', duration:'23 min/ep', bannerImage: imgDeathNote, thumbnail: imgDeathNote, genres:['Misterio','Thriller'], studio:'Madhouse', director:'Tetsurō Araki', seasons: genSeasons(1, 37), description: 'Un estudiante encuentra un cuaderno que le permite matar a cualquiera cuyo nombre escriba.'},
-      { title:'Haikyuu!!', type:'serie', rating:'8.7', year:'2014', duration:'24 min/ep', bannerImage: imgHaikyuu, thumbnail: imgHaikyuu, genres:['Deportes','Comedia'], studio:'Production I.G', director:'Susumu Mitsunaka', seasons: genSeasons(4, 25), description: 'Shoyo Hinata se une al club de voleibol para convertirse en el mejor jugador.'},
-      { title:'Tokyo Ghoul', type:'serie', rating:'8.0', year:'2014', duration:'24 min/ep', bannerImage: imgTokyoGhoul, thumbnail: imgTokyoGhoul, genres:['Terror','Gore'], studio:'Pierrot', director:'Shuhei Morita', seasons: genSeasons(4, 12), description: 'Un estudiante se convierte en un híbrido humano-Ghoul.'},
-      { title:'Sword Art Online', type:'serie', rating:'7.6', year:'2012', duration:'24 min/ep', bannerImage: imgSAO, thumbnail: imgSAO, genres:['Acción','Videojuegos'], studio:'A-1 Pictures', director:'Tomohiko Itō', seasons: genSeasons(3, 25), description: 'Jugadores quedan atrapados en un juego de realidad virtual donde morir en el juego significa morir en la vida real.'},
-      { title:'Black Clover', type:'serie', rating:'7.8', year:'2017', duration:'23 min/ep', bannerImage: imgBlackClover, thumbnail: imgBlackClover, genres:['Magia','Acción'], studio:'Pierrot', director:'Tatsuya Yoshihara', seasons: genSeasons(1, 170), description: 'Un joven sin magia aspira a ser el Rey Mago.'},
-      { title:'Fairy Tail', type:'serie', rating:'8.0', year:'2009', duration:'24 min/ep', bannerImage: imgFairyTail, thumbnail: imgFairyTail, genres:['Fantasía','Aventura'], studio:'A-1 Pictures', director:'Shinji Ishihira', seasons: genSeasons(9, 51), description: 'Las aventuras del gremio de magos Fairy Tail.'},
-      { title:'Blue Lock', type:'serie', rating:'8.4', year:'2022', duration:'24 min/ep', bannerImage: imgBlueLock, thumbnail: imgBlueLock, genres:['Deportes','Fútbol'], studio:'8bit', director:'Tetsuaki Watanabe', seasons: genSeasons(1, 24), description: 'Jóvenes delanteros compiten por un lugar en la selección nacional de fútbol de Japón.'},
-      { title:'Spy x Family', type:'serie', rating:'8.6', year:'2022', duration:'24 min/ep', bannerImage: imgSpyFamily, thumbnail: imgSpyFamily, genres:['Comedia','Espías'], studio:'WIT Studio', director:'Kazuhiro Furuhashi', seasons: genSeasons(2, 12), description: 'Un espía, una asesina y una telépata forman una familia falsa para cumplir sus misiones.'},
     ];
 
     const popularSeries = trendingList.slice(2, 9);
-    
-    // ✅ NUEVO: Lista de Dramas Asiáticos
-    const asianDramas = [
-        { title:'Crash Landing on You', type:'drama', rating:'9.0', year:'2019', duration:'70 min/ep', bannerImage: imgFMA, thumbnail: imgFMA, genres:['Romance','K-Drama'], studio:'Studio Dragon', director:'Lee Jeong-hyo', seasons: genSeasons(1, 16), description: 'Una heredera de Corea del Sur aterriza accidentalmente en Corea del Norte.'},
-        { title:'Vincenzo (Premium)', type:'drama', rating:'8.7', year:'2021', duration:'80 min/ep', bannerImage: imgAOT, thumbnail: imgAOT, genres:['Crimen','Thriller'], studio:'Studio Dragon', director:'Kim Hee-won', seasons: genSeasons(1, 20), isPremium: true, description: 'Un abogado de la mafia regresa a Corea y lucha contra un conglomerado corrupto.'},
-        { title:'Goblin', type:'drama', rating:'8.9', year:'2016', duration:'80 min/ep', bannerImage: imgDemon, thumbnail: imgDemon, genres:['Fantasía','Romance'], studio:'Hwa&Dam Pictures', director:'Lee Eung-bok', seasons: genSeasons(1, 16), description: 'Un ser inmortal busca a su novia humana para terminar con su maldición.'},
-        { title:'Put Your Head on My Shoulder', type:'drama', rating:'8.3', year:'2019', duration:'45 min/ep', bannerImage: imgTokyoGhoul, thumbnail: imgTokyoGhoul, genres:['Comedia','C-Drama'], studio:'Tencent Penguin Pictures', director:'Zhi Wei', seasons: genSeasons(1, 24), description: 'Una estudiante de contabilidad y un genio de la física terminan viviendo juntos.'},
-    ];
-
-    // ✅ NUEVO: Lista de Telenovelas
-    const telenovelas = [
-        { title:'La Reina del Flow', type:'telenovela', rating:'7.5', year:'2018', duration:'45 min/ep', bannerImage: imgOnePiece, thumbnail: imgOnePiece, genres:['Melodrama','Música'], studio:'Caracol Televisión', director:'Liliana Bocanegra', seasons: genSeasons(2, 82), description: 'Una compositora busca venganza contra el hombre que la traicionó.'},
-        { title:'El Señor de los Cielos', type:'telenovela', rating:'7.9', year:'2013', duration:'45 min/ep', bannerImage: imgBlackClover, thumbnail: imgBlackClover, genres:['Narco Serie','Acción'], studio:'Telemundo', director:'Varios', seasons: genSeasons(7, 80), description: 'La vida de un narcotraficante que busca reemplazar su rostro.'},
-        { title:'Pasión de Gavilanes', type:'telenovela', rating:'8.1', year:'2003', duration:'45 min/ep', bannerImage: imgHaikyuu, thumbnail: imgHaikyuu, genres:['Romance','Clásico'], studio:'Telemundo', director:'Rodrigo Triana', seasons: genSeasons(2, 188), description: 'Tres hermanos buscan vengar la muerte de su hermana.'},
-        { title:'Mi Vida (Turca)', type:'telenovela', rating:'8.0', year:'2014', duration:'60 min/ep', bannerImage: imgSpyFamily, thumbnail: imgSpyFamily, genres:['Drama','Turca'], studio:'Fox Türkiye', director:'Sadullah Celen', seasons: genSeasons(4, 131), description: 'La vida de Bahar, una joven de origen humilde.'},
-    ];
-
-    // ✅ NUEVO: Lista de Caricaturas
-    const cartoons = [
-        { title:'Rick y Morty', type:'cartoon', rating:'9.2', year:'2013', duration:'22 min/ep', bannerImage: imgDeathNote, thumbnail: imgDeathNote, genres:['Comedia','Adultos'], studio:'Adult Swim', director:'Varios', seasons: genSeasons(7, 10), description: 'Las aventuras de un genio científico y su nieto ansioso.'},
-        { title:'Avatar: La Leyenda de Aang', type:'cartoon', rating:'9.3', year:'2005', duration:'23 min/ep', bannerImage: imgBlueLock, thumbnail: imgBlueLock, genres:['Aventura','Fantasía'], studio:'Nickelodeon', director:'Varios', seasons: genSeasons(3, 20), description: 'Aang, el último maestro aire, debe salvar al mundo.'},
-        { title:'Un Show Más', type:'cartoon', rating:'8.4', year:'2010', duration:'11 min/ep', bannerImage: imgSAO, thumbnail: imgSAO, genres:['Comedia','Infantil'], studio:'Cartoon Network Studios', director:'J.G. Quintel', seasons: genSeasons(8, 40), description: 'Las surrealistas y cómicas desventuras de Mordecai y Rigby.'},
-        { title:'Young Justice', type:'cartoon', rating:'8.7', year:'2010', duration:'23 min/ep', bannerImage: imgFairyTail, thumbnail: imgFairyTail, genres:['Superhéroes','Acción'], studio:'Warner Bros. Animation', director:'Varios', seasons: genSeasons(4, 26), description: 'Los compañeros adolescentes de los héroes de la Liga de la Justicia forman su propio equipo.'},
-    ];
-
-
+    // Las featuredMovies usan movieSeason que también ha sido modificada para usar streams
     const featuredMovies = [
       { title:'Pelicula 1', type:'movie', rating:'8.5', year:'2023', duration:'120 min', bannerImage: imgMovie, thumbnail: imgMovie, genres:['Acción'], director:'Director A', seasons: [movieSeason('Pelicula 1', '120 min')] },
       { title:'Pelicula 2 (Premium)', type:'movie', rating:'8.8', year:'2022', duration:'110 min', bannerImage: imgDemon, thumbnail: imgDemon, genres:['Fantasía'], director:'Director B', isPremium: true, seasons: [movieSeason('Pelicula 2', '110 min')] },
       { title:'Pelicula 3', type:'movie', rating:'7.9', year:'2021', duration:'95 min', bannerImage: imgAOT1, thumbnail: imgAOT1, genres:['Comedia'], director:'Director C', seasons: [movieSeason('Pelicula 3', '95 min')] },
       { title:'Pelicula 4', type:'movie', rating:'8.1', year:'2020', duration:'135 min', bannerImage: imgOnePiece, thumbnail: imgOnePiece, genres:['Drama'], director:'Director D', seasons: [movieSeason('Pelicula 4', '135 min')] },
     ];
-    // Se usa la lista de series y dramas para las secciones secundarias
-    const recentAdded = trendingList.slice(6, 11).concat(featuredMovies.slice(0, 2)).concat(asianDramas.slice(0, 1)); 
+    const recentAdded = trendingList.slice(6, 11).concat(featuredMovies.slice(0, 2));
     const sampleFeatured = trendingList[0];
 
 
@@ -916,8 +850,7 @@
         showPlayer: false,
         playerSrc: '',
         pendingPlayerSrc: '',
-        showMobileSearch: false, // Estado para la búsqueda móvil
-        showMobileMenu: false, // ✅ CORRECCIÓN: Estado para el menú de categorías móvil
+        showAdPreRoll: false,
         // ESTADOS DEL REPRODUCTOR
         currentContentPlaying: null, 
         currentEpisodeIndex: -1,
@@ -936,10 +869,6 @@
         featuredMovies,
         recentAdded,
         sampleFeatured,
-        // ✅ NUEVOS ARREGLOS DE CONTENIDO
-        asianDramas, 
-        telenovelas,
-        cartoons, 
         
         // --- 6.3.3: MÉTODOS DE UI Y CONTROL ---
         toggleDarkMode() {
