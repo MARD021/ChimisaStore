@@ -359,13 +359,10 @@
           </button>
           
           <template x-if="!isLoggedIn">
-            <button @click="showLogin = true" class="sm:hidden p-2 rounded-full hover:bg-[--bg-secondary] text-[--text-primary]">
-              <i class="fas fa-sign-in-alt text-xl"></i>
-            </button>
             <button @click="showLogin = true" class="hidden sm:flex items-center px-4 py-2 bg-[--accent-color] hover:opacity-90 transition text-white rounded-lg">
               <i class="fas fa-sign-in-alt mr-2"></i> Iniciar Sesión
             </button>
-            </template>
+          </template>
           
           <template x-if="isLoggedIn">
             <div class="relative" x-data="{ showUserMenu: false }">
