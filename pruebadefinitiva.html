@@ -323,7 +323,7 @@
     <div class="container mx-auto px-4 py-3">
       <div class="flex items-center justify-between">
         <div class="flex items-center">
-          <a href="javascript:void(0)" @click="currentView = 'home'; showMobileNav = false" class="text-2xl font-bold text-[--accent-color]">
+          <a href="javascript:void(0)" @click="currentView = 'home'" class="text-2xl font-bold text-[--accent-color]">
             Anime<span class="text-red-500">FC</span>
           </a>
         </div>
@@ -359,10 +359,13 @@
           </button>
           
           <template x-if="!isLoggedIn">
-            <button @click="showLogin = true" class="flex items-center px-4 py-2 bg-[--accent-color] hover:opacity-90 transition text-white rounded-lg text-sm">
+            <button @click="showLogin = true" class="sm:hidden p-2 rounded-full hover:bg-[--bg-secondary] text-[--text-primary]">
+              <i class="fas fa-sign-in-alt text-xl"></i>
+            </button>
+            <button @click="showLogin = true" class="hidden sm:flex items-center px-4 py-2 bg-[--accent-color] hover:opacity-90 transition text-white rounded-lg">
               <i class="fas fa-sign-in-alt mr-2"></i> Iniciar Sesión
             </button>
-          </template>
+            </template>
           
           <template x-if="isLoggedIn">
             <div class="relative" x-data="{ showUserMenu: false }">
@@ -400,7 +403,7 @@
           <button @click="showMobileSearch = !showMobileSearch" class="md:hidden p-2">
             <i class="fas fa-search"></i>
           </button>
-          <button @click="showMobileNav = !showMobileNav" class="md:hidden p-2">
+          <button class="md:hidden p-2">
             <i class="fas fa-bars"></i>
           </button>
         </div>
@@ -417,24 +420,7 @@
           <i class="fas fa-search absolute right-3 top-2.5 text-[--text-secondary]"></i>
         </div>
       </div>
-      
-      <nav x-show="showMobileNav" x-transition class="md:hidden pt-3 pb-2 border-t border-[--bg-secondary]/20">
-        <div class="flex flex-col space-y-2">
-            <a href="javascript:void(0)" @click="currentView = 'home'; showMobileNav = false" class="font-medium hover:text-[--accent-color] transition py-1"
-               :class="currentView === 'home' ? 'text-[--accent-color]' : 'text-[--text-primary]'"> Inicio </a>
-            <a href="javascript:void(0)" @click="currentView = 'movies'; showMobileNav = false" class="font-medium hover:text-[--accent-color] transition py-1"
-               :class="currentView === 'movies' ? 'text-[--accent-color]' : 'text-[--text-primary]'"> Películas </a>
-            <a href="javascript:void(0)" @click="currentView = 'series'; showMobileNav = false" class="font-medium hover:text-[--accent-color] transition py-1"
-               :class="currentView === 'series' ? 'text-[--accent-color]' : 'text-[--text-primary]'"> Anime </a>
-            <a href="javascript:void(0)" @click="currentView = 'dramas'; showMobileNav = false" class="font-medium hover:text-[--accent-color] transition py-1"
-               :class="currentView === 'dramas' ? 'text-[--accent-color]' : 'text-[--text-primary]'"> Dramas </a>
-            <a href="javascript:void(0)" @click="currentView = 'telenovelas'; showMobileNav = false" class="font-medium hover:text-[--accent-color] transition py-1"
-               :class="currentView === 'telenovelas' ? 'text-[--accent-color]' : 'text-[--text-primary]'"> Telenovelas </a>
-            <a href="javascript:void(0)" @click="currentView = 'cartoons'; showMobileNav = false" class="font-medium hover:text-[--accent-color] transition py-1"
-               :class="currentView === 'cartoons' ? 'text-[--accent-color]' : 'text-[--text-primary]'"> Caricaturas </a>
-        </div>
-      </nav>
-      </div>
+    </div>
   </header>
 
   <main class="pt-16 pb-16">
@@ -859,7 +845,6 @@
         currentUser: { name: '', email: '', avatar: '', subscription: 'Gratis' }, 
         currentView: 'home', 
         showLogin: false,
-        showMobileNav: false, // Añadido: Estado para controlar el menú hamburguesa
         showDetail: false,
         currentContent: null,
         currentSeasonIndex: 0,
