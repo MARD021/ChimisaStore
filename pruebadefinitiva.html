@@ -318,7 +318,6 @@
       <div class="text-sm text-gray-400">
         <span x-text="`El contenido comenzará en ${adCountdown} segundos...`"></span>
       </div>
-
     </div>
   </div>
   <header class="fixed top-0 left-0 right-0 z-40 bg-[--bg-primary] shadow-md">
@@ -916,6 +915,7 @@
         showPlayer: false,
         playerSrc: '',
         pendingPlayerSrc: '',
+        showAdPreRoll: false,
         showMobileSearch: false, // Estado para la búsqueda móvil
         showMobileMenu: false, // ✅ CORRECCIÓN: Estado para el menú de categorías móvil
         // ESTADOS DEL REPRODUCTOR
@@ -926,8 +926,8 @@
         currentStreamIndex: 0, 
 
         // START AD REFACTOR: NEW STATES
-        adDurationInSeconds: 5, 
-        adCountdown: 5,
+        adDurationInSeconds: 10, 
+        adCountdown: 10,
         // END AD REFACTOR: NEW STATES
         
         // --- 6.3.2: PROPIEDADES DE DATOS ---
