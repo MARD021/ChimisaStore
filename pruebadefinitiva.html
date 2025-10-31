@@ -336,13 +336,15 @@ l.parentNode.insertBefore(s, l);
              :class="currentView === 'movies' ? 'text-[--accent-color]' : ''"> Películas </a>
           <a href="javascript:void(0)" @click="currentView = 'series'" class="font-medium hover:text-[--accent-color] transition"
              :class="currentView === 'series' ? 'text-[--accent-color]' : ''"> Anime </a>
-
           <a href="javascript:void(0)" @click="currentView = 'dramas'" class="font-medium hover:text-[--accent-color] transition"
              :class="currentView === 'dramas' ? 'text-[--accent-color]' : ''"> Dramas </a>
           <a href="javascript:void(0)" @click="currentView = 'telenovelas'" class="font-medium hover:text-[--accent-color] transition"
              :class="currentView === 'telenovelas' ? 'text-[--accent-color]' : ''"> Telenovelas </a>
           <a href="javascript:void(0)" @click="currentView = 'cartoons'" class="font-medium hover:text-[--accent-color] transition"
              :class="currentView === 'cartoons' ? 'text-[--accent-color]' : ''"> Caricaturas </a>
+          <a href="javascript:void(0)" @click="currentView = 'mangas'" class="font-medium hover:text-[--accent-color] transition"
+             :class="currentView === 'mangas' ? 'text-[--accent-color]' : ''"> Mangas</a>
+
           <div class="relative">
             <input 
               type="text" 
@@ -444,6 +446,9 @@ l.parentNode.insertBefore(s, l);
                  :class="currentView === 'telenovelas' ? 'text-[--accent-color]' : ''"> Telenovelas </a>
             <a href="javascript:void(0)" @click="currentView = 'cartoons'; showMobileMenu = false" class="font-medium hover:text-[--accent-color] transition"
                  :class="currentView === 'cartoons' ? 'text-[--accent-color]' : ''"> Caricaturas </a>
+            <a href="javascript:void(0)" @click="currentView = 'mangas'" class="font-medium hover:text-[--accent-color] transition"
+                 :class="currentView === 'mangas' ? 'text-[--accent-color]' : ''"> Mangas</a>
+
         </nav>
     </div>
     </header>
@@ -726,6 +731,84 @@ l.parentNode.insertBefore(s, l);
           </template>
         </div>
     </div>
+    <div x-show="currentView === 'mangas'" class="container mx-auto px-6 pt-8">
+  <h1 class="text-3xl font-bold mb-6"> Mangas</h1>
+
+  <div class="flex flex-wrap gap-2 mb-6">
+    <button class="bg-[--accent-color] text-white px-4 py-1 rounded-full text-sm">Todos</button>
+    <button class="bg-[--bg-secondary] hover:bg-[--accent-color] hover:text-white transition px-4 py-1 rounded-full text-sm">Shonen</button>
+    <button class="bg-[--bg-secondary] hover:bg-[--accent-color] hover:text-white transition px-4 py-1 rounded-full text-sm">Romance</button>
+    <button class="bg-[--bg-secondary] hover:bg-[--accent-color] hover:text-white transition px-4 py-1 rounded-full text-sm">Acción</button>
+    <button class="bg-[--bg-secondary] hover:bg-[--accent-color] hover:text-white transition px-4 py-1 rounded-full text-sm">Cómics</button>
+  </div>
+
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+    <template x-for="item in filtered(mangas)" :key="item.title">
+      <div @click="openMangaReader(item)" class="anime-card rounded-lg overflow-hidden cursor-pointer">
+        <div class="relative aspect-[2/3] bg-cover bg-center"
+             :style="`background-image: url('${item.bannerImage}')`"></div>
+        <div class="p-2">
+          <h3 class="font-medium truncate" x-text="item.title"></h3>
+          <p class="text-sm text-[--text-secondary]" x-text="item.author"></p>
+        </div>
+      </div>
+    </template>
+  </div>
+</div>
+<!-- ✅ LECTOR DE MANGA MEJORADO -->
+<div x-show="currentView === 'mangaReader'" class="container mx-auto px-4 pt-8">
+  <button 
+    @click="currentView = 'mangas'; currentManga = null"
+    class="mb-4 px-4 py-2 bg-[--accent-color] text-white rounded-lg hover:opacity-80 transition">
+    <i class="fas fa-arrow-left mr-2"></i> Volver
+  </button>
+
+  <template x-if="currentManga">
+    <div>
+      <h1 class="text-3xl font-bold mb-2" x-text="currentManga.title"></h1>
+      <p class="text-[--text-secondary] mb-4" x-text="`Autor: ${currentManga.author}`"></p>
+
+      <!-- Selector de Capítulos -->
+      <div class="mb-6">
+        <select 
+          x-model.number="currentChapterIndex"
+          class="bg-[--bg-secondary] text-[--text-primary] py-2 px-4 rounded-lg border border-[--accent-color]/30 focus:border-[--accent-color] outline-none">
+          <template x-for="(chapter, index) in currentManga.chaptersList" :key="index">
+            <option :value="index" x-text="chapter.name"></option>
+          </template>
+        </select>
+      </div>
+
+      <!-- Contenido del capítulo -->
+      <div class="flex flex-col items-center space-y-4 mb-8">
+        <template x-for="(page, i) in currentManga.chaptersList[currentChapterIndex]?.pages" :key="i">
+          <img :src="page" class="w-full max-w-3xl rounded-lg shadow-md"/>
+        </template>
+      </div>
+
+      <!-- Botones de navegación -->
+      <div class="flex justify-between items-center">
+        <button 
+          @click="prevChapter()"
+          class="px-5 py-2 bg-[--bg-secondary] rounded-lg hover:bg-[--accent-color]/80 hover:text-white transition">
+          <i class="fas fa-chevron-left mr-2"></i> Capítulo anterior
+        </button>
+
+        <span class="text-sm text-[--text-secondary]">
+          Capítulo <span x-text="currentChapterIndex + 1"></span> / 
+          <span x-text="currentManga.chaptersList.length"></span>
+        </span>
+
+        <button 
+          @click="nextChapter()"
+          class="px-5 py-2 bg-[--bg-secondary] rounded-lg hover:bg-[--accent-color]/80 hover:text-white transition">
+          Siguiente capítulo <i class="fas fa-chevron-right ml-2"></i>
+        </button>
+      </div>
+    </div>
+  </template>
+</div>
+
     </main>
       <footer class="bg-[--bg-secondary] text-[--text-secondary] py-8 mt-12">
     <div class="container mx-auto px-6">
@@ -926,6 +1009,41 @@ l.parentNode.insertBefore(s, l);
       { title:'Pelicula 3', type:'movie', rating:'7.9', year:'2021', duration:'95 min', bannerImage: imgAOT1, thumbnail: imgAOT1, genres:['Comedia'], director:'Director C', seasons: [movieSeason('Pelicula 3', '95 min')] },
       { title:'Pelicula 4', type:'movie', rating:'8.1', year:'2020', duration:'135 min', bannerImage: imgOnePiece, thumbnail: imgOnePiece, genres:['Drama'], director:'Director D', seasons: [movieSeason('Pelicula 4', '135 min')] },
     ];
+    const mangas = [
+  { 
+    title: "Chainsaw Man", 
+    author: "Tatsuki Fujimoto", 
+    bannerImage: "https://i.pinimg.com/736x/5d/2b/be/5d2bbe55390dc6507bb49d0b6c68ad8e.jpg", 
+    genres: ["Acción", "Terror", "Shonen"], 
+    description: "Denji lucha contra demonios usando sus poderes de motosierra.", 
+    chaptersList: [
+      { name: "Capítulo 1", pages: [
+        "https://i.pinimg.com/736x/10/af/9e/10af9e143abc02c3ec3c9513281eac51.jpg",
+        "https://i.pinimg.com/736x/48/7a/36/487a36db66d2a03f26707e7b856a83a4.jpg",
+        "https://i.pinimg.com/736x/bc/99/a1/bc99a1d43c106221b656a9e2060aa086.jpg"
+      ]},
+      { name: "Capítulo 2", pages: [
+        "https://i.pinimg.com/736x/48/7a/36/487a36db66d2a03f26707e7b856a83a4.jpg",
+        "https://i.pinimg.com/1200x/1a/de/47/1ade47cb1056e7eb079cd84abf9e3009.jpg"
+      ]}
+    ]
+  },
+  { 
+    title: "One Punch Man", 
+    author: "ONE / Yusuke Murata", 
+    bannerImage: "https://cdn.myanimelist.net/images/manga/3/80661.jpg", 
+    genres: ["Acción", "Comedia"], 
+    description: "Saitama puede derrotar a cualquier enemigo con un solo golpe.", 
+    chaptersList: [
+      { name: "Capítulo 1", pages: [
+        "https://i.pinimg.com/736x/1a/ff/b1/1affb12a4892d7083e0f5e2488698a58.jpg",
+        "https://i.pinimg.com/736x/1a/ff/b1/1affb12a4892d7083e0f5e2488698a58.jpg"
+      ]}
+    ]
+  }
+];
+
+
     // Se usa la lista de series y dramas para las secciones secundarias
     const recentAdded = trendingList.slice(6, 11).concat(featuredMovies.slice(0, 2)).concat(asianDramas.slice(0, 1)); 
     const sampleFeatured = trendingList[0];
@@ -970,6 +1088,45 @@ const allNewReleases = [
           showContentDetail(item) {
     alert('Detalles de: ' + item.title);
   },
+  currentManga: null,
+currentChapterIndex: 0,
+
+openMangaReader(manga) {
+  this.currentManga = manga;
+  this.currentChapterIndex = 0;
+  this.currentView = 'mangaReader';
+},
+
+nextChapter() {
+  const next = this.currentChapterIndex + 1;
+  if (next < this.currentManga.chaptersList.length) {
+    this.currentChapterIndex = next;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.showToast(`Capítulo ${this.currentChapterIndex + 1}`, 'fas fa-check-circle text-green-500');
+  } else {
+    this.showToast('Mamastes No hay más capítulos disponibles.', 'fas fa-exclamation-triangle text-yellow-500');
+  }
+},
+
+prevChapter() {
+  const prev = this.currentChapterIndex - 1;
+  if (prev >= 0) {
+    this.currentChapterIndex = prev;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.showToast(`Capítulo ${this.currentChapterIndex + 1}`, 'fas fa-check-circle text-green-500');
+  } else {
+    this.showToast('Este es el primer capítulo.', 'fas fa-exclamation-triangle text-green-500');
+  }
+},
+// --- Sistema de notificaciones tipo Toast ---
+toast: { visible: false, message: '', icon: '' },
+showToast(msg, icon = 'fas fa-info-circle text-green-500') {
+  this.toast.message = msg;
+  this.toast.icon = icon;
+  this.toast.visible = true;
+  setTimeout(() => (this.toast.visible = false), 3000);
+},
+
 
         // START AD REFACTOR: NEW STATES
         adDurationInSeconds: 10, 
@@ -986,6 +1143,7 @@ const allNewReleases = [
         asianDramas, 
         telenovelas,
         cartoons, 
+        mangas,
         
         // --- 6.3.3: MÉTODOS DE UI Y CONTROL ---
         toggleDarkMode() {
@@ -1227,5 +1385,15 @@ const allNewReleases = [
       };
     }
   </script>
+  <!-- ✅ TOASTS (notificaciones flotantes) -->
+<div 
+  x-show="toast.visible" 
+  x-transition.opacity.duration.300ms 
+  class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-[--accent-color] text-white px-4 py-3 rounded-lg shadow-lg flex items-center space-x-3 z-[9999]"
+  x-cloak>
+  <i :class="toast.icon"></i>
+  <span x-text="toast.message"></span>
+</div>
+
 </body>
 </html>
